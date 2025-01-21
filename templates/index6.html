@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <title>Use Address Autofill for Online Checkout (Javascript)</title>
+    <!-- Default styling. Feel free to remove! -->
+    <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+    <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.24/web.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+
+<div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
+    <div class="wmax600 mx-auto">
+        <div class="address-page">
+            <h4 class="txt-l txt-bold mb6">Zeit</h4>
+<!-- Date-Time Picker Input -->
+
+
+            <input type="text" id="datetime-picker" placeholder="Wählen Sie ein Datum und eine Uhrzeit">
+
+
+<p id="output"></p>
+        </div>
+    </div>
+</div>
+
+<div class="round border border--gray-lighter px12 py24" style="min-height: 550px;">
+    <div class="wmax600 mx-auto">
+        <div class="address-page">
+            <h4 class="txt-l txt-bold mb6">Startort</h4>
+
+            <!-- address form with `autocomplete` attributes on each address input -->
+            <form class="flex flex--column">
+                <!-- first and last name -->
+                <!--
+                <div class="grid grid--gut12">
+                    <div class="col w-1/2">
+                        <label class="txt-s txt-bold color-gray mb3">First Name</label>
+                        <input class="input mb12" name="first-name" required="">
+                    </div>
+                    <div class="col w-1/2">
+                        <label class="txt-s txt-bold color-gray mb3">Last Name</label>
+                        <input class="input mb12" name="last-name" required="">
+                    </div>
+                </div>
+                -->
+
+                <!-- address-line1 with search icon -->
+                <label class="txt-s txt-bold color-gray mb3">Startort</label>
+                <div class="relative color-gray">
+                    <input id="address1_input" class="input mb11" autocomplete="address-line1" name="address-line1" required="">
+                    <svg class="absolute" viewBox="0 0 18 18" xml:space="preserve" width="20" height="20" fill="currentColor" style="top: 8px; right: 8px">
+                        <path d="M7.4 2.5c-2.7 0-4.9 2.2-4.9 4.9s2.2 4.9 4.9 4.9c1 0 1.8-.2 2.5-.8l3.7 3.7c.2.2.4.3.8.3.7 0 1.1-.4 1.1-1.1 0-.3-.1-.5-.3-.8L11.4 10c.4-.8.8-1.6.8-2.5.1-2.8-2.1-5-4.8-5zm0 1.6c1.8 0 3.2 1.4 3.2 3.2s-1.4 3.2-3.2 3.2-3.3-1.3-3.3-3.1 1.4-3.3 3.3-3.3z">
+                        </path>
+                    </svg>
+                </div>
+
+                <!-- address-line2 -->
+                <!--
+                <label class="txt-s txt-bold color-gray mb3">Apartment,  etc. (optional)</label>
+                <input class="input mb13" autocomplete="address-line2" name="address-line2">
+                -->
+                <!-- address-level2, address-level1, postal-code -->
+                <div class="grid grid--gut12 mb12">
+                    <div class="col w-1/3">
+                        <label class="txt-s txt-bold color-gray mb3">Ort</label>
+                        <input class="input mb12" autocomplete="address-level2" name="address-level2" required="">
+                    </div>
+                    <div class="col w-1/3">
+                        <label class="txt-s txt-bold color-gray mb3">Bundesland</label>
+                        <input class="input mb13" autocomplete="address-level1" name="address-level1" required="">
+                    </div>
+                    <div class="col w-1/3">
+                        <label class="txt-s txt-bold color-gray mb3">Postleitzahl</label>
+                        <input class="input mb14" autocomplete="postal-code" name="postal-code" required="">
+                    </div>
+
+                </div>
+
+                <!-- minimap for visual confirmation-->
+                <div id="minimap-container1" class="none h180 wfull relative mt18 mb60"></div>
+
+                <!-- continue button -->
+                <!--
+                <div class="mb12 submit-btns align-r">
+                    <button type="submit" class="btn round">
+                        Continue
+                    </button>
+                </div>
+                -->
+            </form>
+        </div>
+
+
+
+        <div class="address-page">
+            <h4 class="txt-l txt-bold mb6">Zielort</h4>
+
+            <!-- address form with `autocomplete` attributes on each address input -->
+            <form id="destination" class="flex flex--column">
+                <!-- first and last name -->
+                <!--
+                <div class="grid grid--gut12">
+                    <div class="col w-1/2">
+                        <label class="txt-s txt-bold color-gray mb3">First Name</label>
+                        <input class="input mb12" name="first-name" required="">
+                    </div>
+                    <div class="col w-1/2">
+                        <label class="txt-s txt-bold color-gray mb3">Last Name</label>
+                        <input class="input mb12" name="last-name" required="">
+                    </div>
+                </div>
+                -->
+
+                <!-- address-line1 with search icon -->
+                <label class="txt-s txt-bold color-gray mb3">Startort</label>
+                <div class="relative color-gray">
+                    <input id="address2_input" class="input mb21" autocomplete="address-line1" name="address-line1" required="">
+                    <svg class="absolute" viewBox="0 0 18 18" xml:space="preserve" width="20" height="20" fill="currentColor" style="top: 8px; right: 8px">
+                        <path d="M7.4 2.5c-2.7 0-4.9 2.2-4.9 4.9s2.2 4.9 4.9 4.9c1 0 1.8-.2 2.5-.8l3.7 3.7c.2.2.4.3.8.3.7 0 1.1-.4 1.1-1.1 0-.3-.1-.5-.3-.8L11.4 10c.4-.8.8-1.6.8-2.5.1-2.8-2.1-5-4.8-5zm0 1.6c1.8 0 3.2 1.4 3.2 3.2s-1.4 3.2-3.2 3.2-3.3-1.3-3.3-3.1 1.4-3.3 3.3-3.3z">
+                        </path>
+                    </svg>
+                </div>
+
+                <!-- address-line2 -->
+                <!--
+                <label class="txt-s txt-bold color-gray mb3">Apartment,  etc. (optional)</label>
+                <input class="input mb12" autocomplete="address-line2" name="address-line2">
+                -->
+                <!-- address-level2, address-level1, postal-code -->
+                <div class="grid grid--gut12 mb12">
+                    <div class="col w-1/3">
+                        <label class="txt-s txt-bold color-gray mb12">Ort</label>
+                        <input class="input mb22" autocomplete="address-level2" name="address-level2" required="">
+                    </div>
+                    <div class="col w-1/3">
+                        <label class="txt-s txt-bold color-gray mb13">Bundesland</label>
+                        <input class="input mb23" autocomplete="address-level1" name="address-level1" required="">
+                    </div>
+                    <div class="col w-1/3">
+                        <label class="txt-s txt-bold color-gray mb14">Postleitzahl</label>
+                        <input class="input mb24" autocomplete="postal-code" name="postal-code" required="">
+                    </div>
+
+                </div>
+
+
+                <!-- minimap for visual confirmation-->
+                <div id="minimap-container2" class="none h180 wfull relative mt18 mb60"></div>
+
+                <!-- continue button -->
+
+                <div class="mb12 submit-btns align-r">
+                    <button type="submit" class="btn round submit-order-button">
+                        Weiter
+                    </button>
+                </div>
+
+            </form>
+            <p id="result"></p>
+            <!-- end address form -->
+
+    </div>
+
+
+    </div>
+    <!-- confirmation page -->
+    <div class="confirm-page none">
+        <div class="confirm-order-blurb">
+            <h4 class="txt-l txt-bold mb6">Confirm Order</h4>
+
+            <p class="mb24">
+                Review your order and shipping details below. This is only an example, so we aren't going to ship
+                anything
+                to you.
+            </p>
+        </div>
+
+        <div class="order-submitted-blurb none mb24">
+            <h4 class="txt-l txt-bold mb6">Order Submitted!</h4>
+
+            <p class="mb12">
+                Your order is on the way!
+            </p>
+            <div class="txt-ms border-b color-blue color-blue-dark-on-hover link restart-button inline-block">Try this example again</div>
+        </div>
+
+        <!-- order details -->
+        <div class="round border border--gray-light px18 py6 flex mb24">
+            <div class="txt-bold mr24 w60">Order</div>
+            <div class="flex-child-grow">1 - Mapbox Developer Tee Shirt</div>
+        </div>
+
+        <!-- shipping address -->
+        <div class="round border border--gray-light px18 py6 flex mb24">
+            <div class="txt-bold mr24 w60">Ship To</div>
+            <div class="flex-child-grow" id="shipping-address"></div>
+            <div>
+                <div class="txt-ms border-b color-blue color-blue-dark-on-hover link change-address-button">Change</div>
+            </div>
+        </div>
+
+        <div class="mb12 submit-btns align-r">
+            <button type="submit" class="btn round submit-order-button">
+                Submit Order
+            </button>
+        </div>
+    </div>
+    <div id="map"></div>
+</div>
+
+
+
+
+<script>
+
+    const ACCESS_TOKEN = 'pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA';
+
+        let autofillCollection;
+        let minimap;
+
+        // show the minimap
+        function showMap1() {
+            const el = document.getElementById("minimap-container1");
+            el.classList.remove("none");
+        }
+
+        function showMap2() {
+            const el = document.getElementById("minimap-container2");
+            el.classList.remove("none");
+        }
+
+
+
+        window.addEventListener('resize', () => {
+            map.resize();
+        });
+
+        function showConfirmPage() {
+            document.querySelector('.address-page').classList.add('none')
+            document.querySelector('.confirm-page').classList.remove('none')
+        }
+
+        function showAddressPage() {
+            document.querySelector('.address-page').classList.remove('none')
+            document.querySelector('.confirm-page').classList.add('none')
+        }
+
+        function showSubmittedPage() {
+           // document.querySelector('.submit-order-button').classList.add('none')
+           // document.querySelector('.confirm-order-blurb').classList.add('none')
+           // document.querySelector('.change-address-button').classList.add('none')
+           // document.querySelector('.order-submitted-blurb').classList.remove('none')
+             window.location.href = 'https://www.cnn.com'; // Redirect to the desired URL
+        }
+
+        function restartExample() {
+            window.location.reload();
+        }
+
+        // build out HTML to display the shipping address as formatted text
+        function buildAddressHTML(formData) {
+            let addressHTML = `${formData.get('first-name')} ${formData.get('last-name')}<br/>`
+            addressHTML += `${formData.get('address-line1 address-search')}<br/>`
+            if (formData.get('address-line2')) addressHTML += `${formData.get('address-line2')}<br/>`
+            addressHTML += `${formData.get('address-level2')} ${formData.get('address-level1')} ${formData.get('postal-code')}`
+            return addressHTML
+        }
+
+        // click listener for for the "Change" link
+        document.querySelector('.change-address-button').addEventListener('click', showAddressPage)
+
+        // click listener for for the "Submit Order" button
+        //document.querySelector('.submit-order-button').addEventListener('click', showSubmittedPage)
+
+        // click listener for for the "Try this example again" link
+        document.querySelector('.restart-button').addEventListener('click', restartExample)
+
+
+   let selectedDateTime = null;
+
+    // Initialize Flatpickr with German localization
+    flatpickr("#datetime", {
+        enableTime: true,
+        dateFormat: "d.m.Y H:i", // German date format
+        locale: "de" // Set locale to German
+    });
+
+    flatpickr("#datetime-picker", {
+      enableTime: true,
+      dateFormat: "d.m.Y H:i",
+      time_24hr: true,
+      locale: "de",
+      onChange: function(selectedDates, dateStr, instance) {
+        // Save the selected date and time in a variable
+        selectedDateTime = dateStr;
+        console.log("Selected Date and Time:", selectedDateTime);
+      }
+    });
+
+
+    const form = document.getElementById("destination");
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(form); // Create a FormData object
+
+
+        formData["start_address"]= document.querySelector(".input.mb11").value;;
+        formData["start_postal-code"]= document.querySelector(".input.input.mb14").value;
+        formData["start_city"]= document.querySelector(".input.mb12").value;
+        formData["start_state"]= document.querySelector(".input.mb13").value;
+        formData["selected_date_time"]=selectedDateTime;
+        console.log(formData["start_address"]);
+        console.log(formData["start_postal-code"]);
+        console.log(formData["start_city"]);
+        console.log(formData["start_state"]);
+        console.log(formData["selected_date_time"]);
+
+
+        formData["dest_address"]= document.querySelector(".input.mb21").value;;
+        formData["dest_postal-code"]= document.querySelector(".input.input.mb24").value;
+        formData["dest_city"]= document.querySelector(".input.mb22").value;
+        formData["dest_state"]= document.querySelector(".input.mb23").value;
+        console.log(formData["dest_address"]);
+        console.log(formData["dest_postal-code"]);
+        console.log(formData["dest_city"]);
+        console.log(formData["dest_state"]);
+
+
+          fetch("/saveCoordinates", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          })
+          .then(response => {
+            // Handle the response from the server
+            if (response.ok) {
+              console.log("Form submitted successfully");
+              const json = response.text();
+              console.log("JSON:"+json);
+              //document.getElementById("result").textContent = json;
+              return json;
+            } else {
+              console.error("Form submission failed");
+            }
+          }).then((data) => {
+            console.log("DATA:"+data);
+            document.getElementById("result").textContent = data;
+          });
+
+        });
+
+
+
+
+        // Autofill initialization
+        window.addEventListener('load', function () {
+            mapboxsearch.config.accessToken = ACCESS_TOKEN;
+
+            // autofill() automatically binds address search to the address-line1 input
+            autofillCollection = mapboxsearch.autofill({});
+
+            // initialize a minimap
+            minimap1 = new MapboxAddressMinimap();
+            //minimap1.canAdjustMarker = true;
+            minimap1.satelliteToggle = true;
+            minimap1.onSaveMarkerLocation = (lnglat) => {
+                console.log(`Marker moved to ${lnglat}`);
+            };
+
+            minimap2 = new MapboxAddressMinimap();
+            //minimap2.canAdjustMarker = true;
+            minimap2.satelliteToggle = true;
+            minimap2.onSaveMarkerLocation = (lnglat) => {
+                console.log(`Marker moved to ${lnglat}`);
+            };
+
+            // append the minimap to the page
+            const minimapContainer1 = document.getElementById("minimap-container1");
+            minimapContainer1.appendChild(minimap1);
+            const minimapContainer2 = document.getElementById("minimap-container2");
+            minimapContainer2.appendChild(minimap2);
+
+
+            // when the user selects a suggested address, show the minimap
+            autofillCollection.addEventListener(
+                "retrieve",
+                async (e) => {
+                     console.log( e)
+                        const currentTarget = e.currentTarget;
+                        console.log( e.target.id);
+                    if (e.target.id == "address1_input") {
+                        minimap1.feature = e.detail.features[0];
+                        showMap1();
+                        const marker = new mapboxgl.Marker()
+                        .setLngLat([-87.661557, 41.893748]) // Set marker coordinates
+                        .addTo(map)
+                    }
+                    if (e.target.id == "address2_input") {
+                        minimap2.feature = e.detail.features[0];
+                        showMap2();
+                    }
+                }
+            );
+        })
+
+
+
+
+     mapboxgl.accessToken = ACCESS_TOKEN;
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [-87.661557, 41.893748],
+        zoom: 10.7
+      });
+
+      map.on('click', (event) => {
+        const features = map.queryRenderedFeatures(event.point, {
+          layers: ['chicago-parks']
+        });
+        if (!features.length) {
+          return;
+        }
+        const feature = features[0];
+
+        const popup = new mapboxgl.Popup({ offset: [0, -15] })
+          .setLngLat(feature.geometry.coordinates)
+          .setHTML(
+            `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
+          )
+          .addTo(map);
+      });
+</script>
+
+</body>
+</html>

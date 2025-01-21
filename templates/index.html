@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script type="text/javascript" 
+src="http://openlayers.org/api/2.11/OpenLayers.js"></script>
+<script type="text/javascript" >
+var myMap;
+
+function loadOpenLayers(){  
+
+myMap = new OpenLayers.Map("mymap", {});
+
+var wms = new OpenLayers.Layer.WMS(
+"OpenLayers WMS",
+"http://vmap0.tiles.osgeo.org/wms/vmap0",
+{layers: "basic"},
+{});
+
+myMap.addLayer(wms);
+
+myMap.setCenter(new OpenLayers.LonLat(-122.349243, 47.651743));
+
+myMap.zoomTo(6);   
+myMap.on('click', function(event) {
+ document.getElementById("demo").innerHTML = "Hello World";
+
+});
+} 
+
+</script>
+</head>
+<body onload="loadOpenLayers();">
+<div id="mymap" style="width: 620px; height: 460px; border: 1px solid;">
+<p id="demo">
+</div>
+
+</body>
+</html>
