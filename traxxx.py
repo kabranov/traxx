@@ -1,6 +1,7 @@
 from flask import Flask, request, render_template,jsonify
 #from geopy.geocoders import Nominatim
 import geocoder
+import math
 
 app = Flask(__name__)
 
@@ -93,6 +94,17 @@ def save_coordinates():
         dest_address_string="{0} {1} {2} {3}".format(dest_address, dest_city,dest_state, dest_postal_code)
         coords_dest = get_coordinates(dest_address_string)
 
+        print(coords_start)
+        print(coords_dest)
+
+        lat_start, long_start =  coords_start
+        lat_dest, long_dest =  coords_dest
+
+
+        distance = haversine(lat_start, long_start, lat_dest, long_dest)
+        string_disctance = "{:.1f}".format(float(distance))
+        print(string_disctance)
+
 
         new_coordinate_start = {
             "long": coords_start[1],
@@ -110,7 +122,8 @@ def save_coordinates():
             "address": dest_address_string,
             "postal-code":dest_postal_code,
             "city":dest_city,
-            "state":dest_state
+            "state":dest_state,
+            "route":string_disctance
         }
 
         new_coordinate = new_coordinate_start,new_coordinate_dest
@@ -126,7 +139,9 @@ def save_coordinates():
 
 
         #return jsonify({"message": "Coordinates saved successfully", "data": (str(num_requests["num_requests"]), new_coordinate)}), 201
-        return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"=  Bitte zeigen Sie diese Bestellnummer dem Fahrer am Abholort.  Ihre Abholzeut ist "+ selected_time + ".", 201
+        #return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"=  Bitte zeigen Sie diese Bestellnummer dem Fahrer am Abholort.  Ihre Abholzeut ist "+ selected_time + ".", 201
+        return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
+
 
     except Exception as e:
         print(f"An error occurred: {e}") # Log the error for debugging
@@ -151,3 +166,21 @@ def get_coordinates( address:str)-> [str, str]:
 
     return latitude,longitude
 
+
+def haversine(lat1, lon1, lat2, lon2):
+    # Convert latitude and longitude from degrees to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat / 2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    # Radius of Earth in kilometers (mean radius = 6,371 km)
+    radius = 6371.0
+    return radius * c
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=5000)
