@@ -52,13 +52,15 @@
                 -->
 
                 <!-- address-line1 with search icon -->
-                <label class="txt-s txt-bold color-gray mb3">Startort</label>
+                <!--label class="txt-s txt-bold color-gray mb3">Startort</label-->
                 <div class="relative color-gray">
-                    <input id="address1_input" class="input mb11" autocomplete="address-line1" name="address-line1" required="">
+                    <input id="address1_input" class="input mb11" autocomplete="address-line1" name="address-line1" required=""  placeholder="Addresse" >
+                    <!--
                     <svg class="absolute" viewBox="0 0 18 18" xml:space="preserve" width="20" height="20" fill="currentColor" style="top: 8px; right: 8px">
                         <path d="M7.4 2.5c-2.7 0-4.9 2.2-4.9 4.9s2.2 4.9 4.9 4.9c1 0 1.8-.2 2.5-.8l3.7 3.7c.2.2.4.3.8.3.7 0 1.1-.4 1.1-1.1 0-.3-.1-.5-.3-.8L11.4 10c.4-.8.8-1.6.8-2.5.1-2.8-2.1-5-4.8-5zm0 1.6c1.8 0 3.2 1.4 3.2 3.2s-1.4 3.2-3.2 3.2-3.3-1.3-3.3-3.1 1.4-3.3 3.3-3.3z">
                         </path>
                     </svg>
+                    -->
                 </div>
 
                 <!-- address-line2 -->
@@ -69,16 +71,16 @@
                 <!-- address-level2, address-level1, postal-code -->
                 <div class="grid grid--gut12 mb12">
                     <div class="col w-1/3">
-                        <label class="txt-s txt-bold color-gray mb3">Ort</label>
-                        <input class="input mb12" autocomplete="address-level2" name="address-level2" required="">
+                        <!--label class="txt-s txt-bold color-gray mb3">Ort</label-->
+                        <input class="input mb12" autocomplete="address-level2" name="address-level2" required="" contenteditable="false" placeholder="Ort" readonly="readonly" style="border:0px;background-color:white; border-color:white;" tabindex="-1">
                     </div>
                     <div class="col w-1/3">
-                        <label class="txt-s txt-bold color-gray mb3">Bundesland</label>
-                        <input class="input mb13" autocomplete="address-level1" name="address-level1" required="">
+                        <!--label class="txt-s txt-bold color-gray mb3">Bundesland</label-->
+                        <input class="input mb13" autocomplete="address-level1" name="address-level1" required="" contenteditable="false" placeholder="Bundesland" readonly="readonly"style="border:0px;background-color:white; border-color:white;" tabindex="-1">
                     </div>
                     <div class="col w-1/3">
-                        <label class="txt-s txt-bold color-gray mb3">Postleitzahl</label>
-                        <input class="input mb14" autocomplete="postal-code" name="postal-code" required="">
+                        <!--label class="txt-s txt-bold color-gray mb3">Postleitzahl</label-->
+                        <input class="input mb14" autocomplete="postal-code" name="postal-code" contenteditable="false" placeholder="Postleitzahl" readonly="readonly" style="border:0px;background-color:white; border-color:white;" tabindex="-1">
                     </div>
 
                 </div>
@@ -121,7 +123,7 @@
                 <!-- address-line1 with search icon -->
                 <label class="txt-s txt-bold color-gray mb3">Startort</label>
                 <div class="relative color-gray">
-                    <input id="address2_input" class="input mb21" autocomplete="address-line1" name="address-line1" required="">
+                    <input id="address2_input" class="input mb21" autocomplete="address-line1" name="address-line1" required=""  placeholder="Addresse">
                     <svg class="absolute" viewBox="0 0 18 18" xml:space="preserve" width="20" height="20" fill="currentColor" style="top: 8px; right: 8px">
                         <path d="M7.4 2.5c-2.7 0-4.9 2.2-4.9 4.9s2.2 4.9 4.9 4.9c1 0 1.8-.2 2.5-.8l3.7 3.7c.2.2.4.3.8.3.7 0 1.1-.4 1.1-1.1 0-.3-.1-.5-.3-.8L11.4 10c.4-.8.8-1.6.8-2.5.1-2.8-2.1-5-4.8-5zm0 1.6c1.8 0 3.2 1.4 3.2 3.2s-1.4 3.2-3.2 3.2-3.3-1.3-3.3-3.1 1.4-3.3 3.3-3.3z">
                         </path>
@@ -136,18 +138,17 @@
                 <!-- address-level2, address-level1, postal-code -->
                 <div class="grid grid--gut12 mb12">
                     <div class="col w-1/3">
-                        <label class="txt-s txt-bold color-gray mb12">Ort</label>
-                        <input class="input mb22" autocomplete="address-level2" name="address-level2" required="">
+                        <!--label class="txt-s txt-bold color-gray mb12">Ort</label-->
+                        <input class="input mb22" autocomplete="address-level2" name="address-level2" required=""  placeholder="Ort" readonly="readonly" style="border:0px;background-color:white;border-color:white;" tabindex="-1">
                     </div>
                     <div class="col w-1/3">
-                        <label class="txt-s txt-bold color-gray mb13">Bundesland</label>
-                        <input class="input mb23" autocomplete="address-level1" name="address-level1" required="">
+                        <!--label class="txt-s txt-bold color-gray mb13">Bundesland</label-->
+                        <input class="input mb23" autocomplete="address-level1" name="address-level1" required=""  placeholder="Bundesland" readonly="readonly" style="border:0px;background-color:white;border-color:white;" tabindex="-1">
                     </div>
                     <div class="col w-1/3">
-                        <label class="txt-s txt-bold color-gray mb14">Postleitzahl</label>
-                        <input class="input mb24" autocomplete="postal-code" name="postal-code" required="">
+                        <!--label class="txt-s txt-bold color-gray mb14">Postleitzahl</label-->
+                        <input class="input mb24" autocomplete="postal-code" name="postal-code"  required="" placeholder="Postleitzahl" readonly="readonly" style="border:0px;background-color:white;border-color:white;" tabindex="-1">
                     </div>
-
                 </div>
 
 
@@ -163,7 +164,7 @@
                 </div>
 
             </form>
-            <p id="result"></p>
+            <strong><bold></bold><p id="result"></p></bold></strong>
             <!-- end address form -->
 
     </div>
@@ -402,9 +403,9 @@
                     if (e.target.id == "address1_input") {
                         minimap1.feature = e.detail.features[0];
                         showMap1();
-                        const marker = new mapboxgl.Marker()
-                        .setLngLat([-87.661557, 41.893748]) // Set marker coordinates
-                        .addTo(map)
+                        //const marker = new mapboxgl.Marker()
+                        //.setLngLat([-87.661557, 41.893748]) // Set marker coordinates
+                        //.addTo(map)
                     }
                     if (e.target.id == "address2_input") {
                         minimap2.feature = e.detail.features[0];
