@@ -21,3 +21,17 @@ http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/
 
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_all
 ```
+
+
+### 3. Restart in AWS
+```
+ubuntu    101783       1  0 Jan22 ?        00:00:10 python3 traxxx.py
+ubuntu    105337  105327  0 06:31 pts/0    00:00:00 grep --color=auto traxx
+ubuntu@ip-172-31-95-98:~$ kill -9 101783
+```
+
+```
+ubuntu@ip-172-31-95-98:~$ python3 -m venv venv
+ubuntu@ip-172-31-95-98:~$ source venv/bin/activate
+(venv) ubuntu@ip-172-31-95-98:~$ pip3 install geocoder
+```
