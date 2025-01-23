@@ -159,7 +159,11 @@ def save_coordinates():
         #return jsonify({"message": "Coordinates saved successfully", "data": (str(num_requests["num_requests"]), new_coordinate)}), 201
         #return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"=  Bitte zeigen Sie diese Bestellnummer dem Fahrer am Abholort.  Ihre Abholzeut ist "+ selected_time + ".", 201
         #return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
-        return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
+
+        if map_distance_str:
+            return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
+        else
+            return "Keine Route zwischen Start und Ziel existiert. Bitte überprüfen Sie Ihre Start- und Zieladresse. ",201
 
 
     except Exception as e:
