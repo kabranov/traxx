@@ -2,15 +2,17 @@ from flask import Flask, request, render_template,jsonify
 #from geopy.geocoders import Nominatim
 import geocoder
 import math
+import requests
 
 app = Flask(__name__)
-
 
 start_coordinates=[]
 dest_coordinates=[]
 coordinates={}
 num_requests={}
 num_requests = {"num_requests":0}
+
+ACCESS_TOKEN = "pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA";
 
 @app.route('/')
 def hello():
@@ -53,7 +55,6 @@ def get_data():
 
 @app.route('/get_all', methods=['GET'])
 def get_all():
-    print('+++')
     print(coordinates)
     return jsonify(coordinates)
 
@@ -62,7 +63,6 @@ def get_all():
 def save_coordinates():
     try:
         data = request.get_json()
-        print("====>new data")
         print(data)
         if not data:
             return jsonify({"error": "No JSON payload provided"}), 400
@@ -103,7 +103,27 @@ def save_coordinates():
 
         distance = haversine(lat_start, long_start, lat_dest, long_dest)
         string_disctance = "{:.1f}".format(float(distance))
-        print(string_disctance)
+        print("distance:"+string_disctance)
+
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+
+        params = {
+            'access_token': 'pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA',
+        }
+
+        data = 'coordinates='+str(long_start)+','+str(lat_start)+';'+str(long_dest)+','+str(lat_dest)+'&steps=true&waypoints=0;1&waypoint_names=Home;Work&banner_instructions=true'
+        print(data)
+        print(data)
+        response = requests.post('https://api.mapbox.com/directions/v5/mapbox/driving', params=params, headers=headers, data=data)
+
+        json_map = response.json()
+        map_distance_json = json_map['routes'][0].get('distance')
+        map_distance_float = float(map_distance_json)/1000.0
+        map_distance_str = "{:.1f}".format(float(map_distance_float))
+
+        print(json_map['routes'][0].get('distance'))
 
 
         new_coordinate_start = {
@@ -136,11 +156,10 @@ def save_coordinates():
         coordinates[num_requests["num_requests"]]=new_coordinate
         print("new_coordinate="+ str(num_requests["num_requests"]))
 
-
-
         #return jsonify({"message": "Coordinates saved successfully", "data": (str(num_requests["num_requests"]), new_coordinate)}), 201
         #return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"=  Bitte zeigen Sie diese Bestellnummer dem Fahrer am Abholort.  Ihre Abholzeut ist "+ selected_time + ".", 201
-        return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
+        #return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
+        return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
 
 
     except Exception as e:
