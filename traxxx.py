@@ -119,6 +119,10 @@ def save_coordinates():
         response = requests.post('https://api.mapbox.com/directions/v5/mapbox/driving', params=params, headers=headers, data=data)
 
         json_map = response.json()
+
+        if not 'routes' in json_map or len(json_map['routes'])==0:
+            return "Keine Route zwischen Start und Ziel existiert. Bitte überprüfen Sie Ihre Start- und Zieladresse. ",201
+
         map_distance_json = json_map['routes'][0].get('distance')
         map_distance_float = float(map_distance_json)/1000.0
         map_distance_str = "{:.1f}".format(float(map_distance_float))
@@ -160,11 +164,7 @@ def save_coordinates():
         #return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"=  Bitte zeigen Sie diese Bestellnummer dem Fahrer am Abholort.  Ihre Abholzeut ist "+ selected_time + ".", 201
         #return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
 
-        if map_distance_str:
-            return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
-        else
-            return "Keine Route zwischen Start und Ziel existiert. Bitte überprüfen Sie Ihre Start- und Zieladresse. ",201
-
+        return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
 
     except Exception as e:
         print(f"An error occurred: {e}") # Log the error for debugging
