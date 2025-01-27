@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="utf-8">
-    <title>Use Address Autofill for Online Checkout (Javascript)</title>
+    <title>Traxxx Mitfahrer Konsole</title>
     <!-- Default styling. Feel free to remove! -->
     <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
     <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.24/web.js"></script>
@@ -15,17 +15,28 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
 
+
+
+<div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
+    <div class="wmax600 mx-auto">
+        <div class="address-page">
+            <img src="{{url_for('static', filename='Traxx_Logo.jpeg')}}" alt="Traxx_Logo" style="width:128px;height:128px;">
+            <h3 class="txt-l txt-bold mb6"><strong> TRAXX Mitfahrer Konsole</strong></h3>
+
+        </div>
+    </div>
+</div>
+
 <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
+
     <div class="wmax600 mx-auto">
         <div class="address-page">
             <h4 class="txt-l txt-bold mb6">Zeit</h4>
-<!-- Date-Time Picker Input -->
-
-
+            <!-- Date-Time Picker Input -->
             <input type="text" id="datetime-picker" placeholder="Wählen Sie ein Datum und eine Uhrzeit">
 
 
-<p id="output"></p>
+            <p id="output"></p>
         </div>
     </div>
 </div>
