@@ -1,39 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<script type="text/javascript" 
-src="http://openlayers.org/api/2.11/OpenLayers.js"></script>
-<script type="text/javascript" >
-var myMap;
-
-function loadOpenLayers(){  
-
-myMap = new OpenLayers.Map("mymap", {});
-
-var wms = new OpenLayers.Layer.WMS(
-"OpenLayers WMS",
-"http://vmap0.tiles.osgeo.org/wms/vmap0",
-{layers: "basic"},
-{});
-
-myMap.addLayer(wms);
-
-myMap.setCenter(new OpenLayers.LonLat(-122.349243, 47.651743));
-
-myMap.zoomTo(6);   
-myMap.on('click', function(event) {
- document.getElementById("demo").innerHTML = "Hello World";
-
-});
-} 
-
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passagiere und Gepäck</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .image-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
 </head>
-<body onload="loadOpenLayers();">
-<div id="mymap" style="width: 620px; height: 460px; border: 1px solid;">
-<p id="demo">
-</div>
+<body>
+<h1>Passagiere und Gepäck</h1>
+<table id="gallery"></table>
 
+<script>
+    fetch('/images')
+        .then(response => response.json())
+        .then(images => {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '';
+
+            let row;
+            images.forEach((image, index) => {
+                if (index % 2 === 0) {
+                    row = document.createElement('tr');
+                    gallery.appendChild(row);
+                }
+
+                const cell = document.createElement('td');
+
+                const container = document.createElement('div');
+                container.classList.add('image-container');
+
+                const img = document.createElement('img');
+                img.src = `/images/${image}`;
+
+                const name = document.createElement('div');
+                name.classList.add('image-name');
+                name.textContent = image;
+
+                container.appendChild(img);
+                container.appendChild(name);
+                cell.appendChild(container);
+                row.appendChild(cell);
+            });
+        })
+        .catch(error => console.error('Error loading images:', error));
+</script>
 </body>
 </html>
+

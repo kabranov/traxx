@@ -1,10 +1,14 @@
-from flask import Flask, request, render_template,jsonify
+from flask import Flask, request, render_template,jsonify, send_from_directory
 #from geopy.geocoders import Nominatim
+import os
 import geocoder
 import math
 import requests
 
 app = Flask(__name__)
+
+IMAGE_DIR = os.getcwd()
+
 
 start_coordinates=[]
 dest_coordinates=[]
@@ -17,6 +21,10 @@ ACCESS_TOKEN = "pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvM
 @app.route('/')
 def hello():
     return render_template('index6.html')
+
+@app.route('/driver')
+def driver():
+    return render_template('index.html')
 
 @app.route('/offer/',methods=['GET'])
 def offer():
@@ -57,6 +65,21 @@ def get_data():
 def get_all():
     print(coordinates)
     return jsonify(coordinates)
+
+@app.route('/images')
+def list_images():
+
+
+    IMAGE_FOLDER = IMAGE_DIR +'/images'
+    images = [f for f in os.listdir(IMAGE_FOLDER) if f.endswith('.jpg') or f.endswith('.jpeg')]
+    return jsonify(images)
+
+
+@app.route('/images/<filename>')
+def get_image(filename):
+    """Serves the requested image."""
+    IMAGE_FOLDER = IMAGE_DIR +'/images'
+    return send_from_directory(IMAGE_FOLDER, filename)
 
 
 @app.route('/saveCoordinates', methods=['POST'])
