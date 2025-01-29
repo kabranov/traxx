@@ -20,6 +20,9 @@ flask --app traxxx.py run --debug
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/
 
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_all
+
+Passangers and luggage
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/driver
 ```
 
 
