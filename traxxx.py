@@ -111,7 +111,7 @@ def save_coordinates():
         except (ValueError, TypeError):
             return jsonify({"error": "Invalid data types for long or lat. Must be numbers"}), 400
 
-        start_address_string="{0} {1} {2} {3} {4}".format(start_address, start_city,start_state, start_postal_code, selected_time)
+        start_address_string="{0} {1} {2} {3}".format(start_address, start_city,start_state, start_postal_code)
         coords_start = get_coordinates(start_address_string)
 
         dest_address_string="{0} {1} {2} {3}".format(dest_address, dest_city,dest_state, dest_postal_code)
@@ -152,7 +152,9 @@ def save_coordinates():
 
         print(json_map['routes'][0].get('distance'))
 
-
+        pass_data = {
+            "request_number" : num_requests["num_requests"]+1
+        }
         new_coordinate_start = {
             "long": coords_start[1],
             "lat":coords_start[0],
@@ -173,7 +175,7 @@ def save_coordinates():
             "route":string_disctance
         }
 
-        new_coordinate = new_coordinate_start,new_coordinate_dest
+        new_coordinate = pass_data,new_coordinate_start,new_coordinate_dest
 
 
         start_coordinates.append(new_coordinate_start)
