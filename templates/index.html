@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+
     <title>Passagiere und Gepäck</title>
     <style>
         table {
@@ -17,7 +19,7 @@
         img {
             max-width: 200px;
             height: auto;
-            border: 1px solid #ccc;
+            border: 0px solid #ccc;
             border-radius: 5px;
         }
         .image-name {
@@ -29,15 +31,28 @@
 </head>
 <body>
 <h1>Passagiere und Gepäck</h1>
-<table id="gallery">
-    <thead>
-    <th> Passagier Nummer </th>
-    <th> Startpunkt </th>
-    <th> Ziel </th>
-    <th> Startzeit </th>
-    <th> Mitfahrer </th>
-    </thead>
-</table>
+
+<div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
+    <div class="wmax800 mx-auto">
+        <div class="address-page">
+            <img src="{{url_for('static', filename='Traxx_Logo.jpeg')}}" alt="Traxx_Logo" style="width:128px;height:128px;">
+            <h3 class="txt-l txt-bold mb6"><strong> TRAXX Fahrer Konsole</strong></h3>
+            <table id="gallery">
+                    <thead>
+                    <th> Passagier Nummer </th>
+                    <th> Startpunkt </th>
+                    <th> Ziel </th>
+                    <th> Startzeit </th>
+                    <th> Mitfahrer </th>
+                    <th> Gepäck </th>
+                    </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
 
 <script>
 
@@ -83,6 +98,7 @@
             //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
             //var myImage.src="../images/12_luggage.jpg"
             let c5 = row.insertCell(4);
+            let c6 = row.insertCell(5);
 
             //const cell = row.insertCell();
 
@@ -93,6 +109,16 @@
 
             // Add the image to the cell
             c5.appendChild(img);
+
+
+
+            // Create an image element
+            const img1 = document.createElement("img");
+            img1.src = "./images/default_luggage.jpg";
+            img1.alt = "defalaut luggage image";
+
+            // Add the image to the cell
+            c6.appendChild(img1);
 
 
             // Add data to c1 and c2
