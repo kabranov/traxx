@@ -41,7 +41,7 @@ ubuntu@ip-172-31-95-98:~$ source venv/bin/activate
 (venv) ubuntu@ip-172-31-95-98:~$ pip3 install geocoder
 ```
 
-### 3. Curl command to add new request to the traxx server:
+### 4. Curl command to add new request to the traxx server:
 
 ```
 curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/saveCoordinates' \
