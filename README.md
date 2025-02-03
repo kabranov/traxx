@@ -40,3 +40,24 @@ ubuntu@ip-172-31-95-98:~$ python3 -m venv venv
 ubuntu@ip-172-31-95-98:~$ source venv/bin/activate
 (venv) ubuntu@ip-172-31-95-98:~$ pip3 install geocoder
 ```
+
+### 3. Curl command to add new request to the traxx server:
+
+```
+curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/saveCoordinates' \
+--header 'Content-Type: application/json' \
+--data '{
+"start_address": "Reichendorferstraße 62",
+"start_postal-code": "8212",
+"start_city": "Pischelsdorf am Kulm",
+"start_state": "",
+"selected_date_time": "03.02.2025 12: 45",
+"dest_address": "Straße Der Nationen 62",
+"dest_postal-code": "09111",
+"dest_city": "Chemnitz",
+"dest_state": "",
+"base64_encoded_image_passenger":"VGhpcyBpcyBwZXJzb24gaW1hZ2UgYmFzZSA2NA==",
+"base64_encoded_image_luggage":"VGhpcyBpcyBhIHRlc3QgYmFzZTY0IHN0cmluZw=="
+
+}'
+```
