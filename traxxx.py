@@ -4,6 +4,7 @@ import os
 import geocoder
 import math
 import requests
+import base64
 
 app = Flask(__name__)
 
@@ -108,6 +109,13 @@ def save_coordinates():
 
             selected_time = data["selected_date_time"]
 
+            base64_encoded_passenger_image=""
+            base64_encoded_luggage_image=""
+            if "base64_encoded_image_passenger" in data :
+                base64_encoded_passenger_image = data["base64_encoded_image_passenger"]
+            if "base64_encoded_image_luggage" in data :
+                base64_encoded_luggage_image = data["base64_encoded_image_luggage"]
+
         except (ValueError, TypeError):
             return jsonify({"error": "Invalid data types for long or lat. Must be numbers"}), 400
 
@@ -138,7 +146,7 @@ def save_coordinates():
 
         data = 'coordinates='+str(long_start)+','+str(lat_start)+';'+str(long_dest)+','+str(lat_dest)+'&steps=true&waypoints=0;1&waypoint_names=Home;Work&banner_instructions=true'
         print(data)
-        print(data)
+
         response = requests.post('https://api.mapbox.com/directions/v5/mapbox/driving', params=params, headers=headers, data=data)
 
         json_map = response.json()
@@ -175,6 +183,9 @@ def save_coordinates():
             "route":string_disctance
         }
 
+
+        # Processing of data
+
         new_coordinate = pass_data,new_coordinate_start,new_coordinate_dest
 
 
@@ -182,6 +193,31 @@ def save_coordinates():
         dest_coordinates.append(new_coordinate_dest)
 
         num_requests["num_requests"] =  num_requests["num_requests"]+1
+
+        passenger_image = b''
+        luggage_image = b''
+        if base64_encoded_passenger_image:
+            passenger_image = base64.b64decode(base64_encoded_passenger_image)
+
+        if base64_encoded_luggage_image:
+            luggage_image = base64.b64decode(base64_encoded_luggage_image)
+
+        print("passenger_image:"+str(passenger_image))
+        print("luggage_image:"+str(luggage_image))
+
+        # Save the decoded data to a file
+
+        if passenger_image and not passenger_image == b'':
+            passenger_image_name = IMAGE_DIR+"/images/"+"passenger_image_"+str(num_requests["num_requests"])+".jpeg"
+            with open(passenger_image_name, "wb") as file:
+                file.write(passenger_image)
+
+        if luggage_image and not luggage_image == b'':
+            luggage_image_name = IMAGE_DIR+"/images/"+"luggage_image_"+str(num_requests["num_requests"])+".jpeg"
+            with open(luggage_image_name, "wb") as file:
+                file.write(luggage_image)
+
+        # Save in the database hash
         coordinates[num_requests["num_requests"]]=new_coordinate
         print("new_coordinate="+ str(num_requests["num_requests"]))
 
