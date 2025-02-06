@@ -56,7 +56,12 @@
 
 <script>
 
-    let requestMap = new Map()
+    let requestMap = new Map();
+    var LUGGAGE_IMAGE="luggage_image_";
+    var PASSENGER_IMAGE="passenger_image_";
+    var IMAGE_EXTENTION = ".jpeg";
+   // const fs = require('fs');
+
 
 
     fetch('/get_all')
@@ -107,8 +112,25 @@
             img.src = "./images/defalaut_passanger.jpg";
             img.alt = "defalaut passanger image";
 
+            const hostname = window.location.hostname;
+            console.log(hostname);
+
+            var fileNameLuggageString="/images/"+LUGGAGE_IMAGE+currNumber+IMAGE_EXTENTION;
+
+            console.log("===>"+fileNameLuggageString);
+
+            doesFileExist(fileNameLuggageString)
+            .then(exists => {
+                if (exists) {
+                    console.log("File exists!");
+                     img.src = fileNameLuggageString
+                } else {
+                    console.log("File does not exist!");
+                }
+            });
+
             // Add the image to the cell
-            c5.appendChild(img);
+            c6.appendChild(img);
 
 
 
@@ -117,8 +139,24 @@
             img1.src = "./images/default_luggage.jpg";
             img1.alt = "defalaut luggage image";
 
+            var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
+
+            console.log(fileNamePersonString);
+
+            doesFileExist(fileNamePersonString)
+            .then(exists => {
+                if (exists) {
+                    console.log("File exists!");
+                     img1.src = fileNamePersonString
+                } else {
+                    console.log("File does not exist!");
+                }
+            });
+
+
+
             // Add the image to the cell
-            c6.appendChild(img1);
+            c5.appendChild(img1);
 
 
             // Add data to c1 and c2
@@ -136,6 +174,19 @@
         // Handle any errors during the fetch
         console.error('Error:', error);
       });
+
+
+
+async function doesFileExist(urlToFile) {
+  try {
+    const response = await fetch(urlToFile, { method: 'GET' });
+    return response.ok; // Returns true if status is 200-299
+  } catch (error) {
+    return false;
+  }
+}
+
+
 
 
 /*
