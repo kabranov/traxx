@@ -27,6 +27,11 @@ def hello():
 def driver():
     return render_template('index.html')
 
+@app.route('/manager')
+def manager():
+    return render_template('index_manager.html')
+
+
 @app.route('/offer/',methods=['GET'])
 def offer():
     return render_template('offerForm.html')
