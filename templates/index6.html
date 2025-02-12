@@ -84,7 +84,7 @@
                 <!-- address-level2, address-level1, postal-code -->
                 <div class="grid grid--gut12 mb12">
                     <div class="col w-1/2" >
-                        <input id="address1_input" class="input mb11" autocomplete="address-line1" name="address-line1" required=""  placeholder="Addresse" >
+                        <input id="address1_input" class="input mb11" autocomplete="address-line1" name="address-line1" required=""  placeholder="Hausnummer Straße Ort" >
                     </div>
                     <div class="col w-1/3" >
                         <!--label class="txt-s txt-bold color-gray mb3">Ort</label-->
@@ -160,7 +160,7 @@
                 <div class="grid grid--gut12 mb12">
                     <div class="col w-1/2">
                         <!--label class="txt-s txt-bold color-gray mb12">Ort</label-->
-                        <input id="address2_input" class="input mb21" autocomplete="address-line1" name="address-line1" required=""  placeholder="Addresse">
+                        <input id="address2_input" class="input mb21" autocomplete="address-line1" name="address-line1" required=""  placeholder="Hausnummer Straße Ort">
                     </div>
                     <div class="col w-1/3">
                         <!--label class="txt-s txt-bold color-gray mb12">Ort</label-->
@@ -398,7 +398,10 @@
             mapboxsearch.config.accessToken = ACCESS_TOKEN;
 
             // autofill() automatically binds address search to the address-line1 input
-            autofillCollection = mapboxsearch.autofill({});
+            autofillCollection = mapboxsearch.autofill({
+                    options: { country: 'de' }
+                }
+            );
 
             // initialize a minimap
             minimap1 = new MapboxAddressMinimap();
