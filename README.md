@@ -17,17 +17,22 @@ flask --app traxxx.py run --debug
 ### 2).Links to the prototype web app
 
 ```
-passenger console - subnmit a request
+passenger console - submit a request
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/
 
 all passenger requests
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_all
 
-Passangers and luggage
+Driver offer Passangers and luggage (not finished)
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/driver
 
 Manager console
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/manager
+
+Example search box (find Point of Interest)
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000//offer/
+
+
 ```
 
 

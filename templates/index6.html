@@ -14,6 +14,10 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 
 
 
@@ -255,6 +259,20 @@
         let autofillCollection;
         let minimap;
 
+
+        // Add geocoder (autocomplete search box)
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search for places...',
+            types: 'poi', // Focus on Points of Interest
+            countries: 'us', // Restrict to specific country (optional)
+            bbox: [-180, -85, 180, 85], // Optional bounding box filter
+            proximity: { longitude: -74.006, latitude: 40.7128 } // Search near NYC initially
+        });
+
+
+
         // show the minimap
         function showMap1() {
             const el = document.getElementById("minimap-container1");
@@ -398,7 +416,7 @@
             mapboxsearch.config.accessToken = ACCESS_TOKEN;
 
             // autofill() automatically binds address search to the address-line1 input
-            autofillCollection = mapboxsearch.autofill({
+             autofillCollection = mapboxsearch.autofill({
                     options: { country: 'de' }
                 }
             );

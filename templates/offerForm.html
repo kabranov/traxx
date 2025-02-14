@@ -1,21 +1,53 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="utf-8">
+  <title>Add Search Box to a Web Map</title>
+  <!-- Default styling. Feel free to remove! -->
+  <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+  <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.25/web.js"></script>
+</head>
 <body>
+<!-- Load Mapbox GL JS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 
-<h2>Form anbieter</h2>
+<div id="map" style="position: absolute; width: 100%; height: 100%"></div>
+<script>
 
-<form action="/handle_data" method="post">
-  <label for="start">Startort</label><br>
-  <input type="text" id="startAddress" name="sAddress" value="Start"><br>
-  <label for="lname">Startort:</label><br>
-  <input type="text" id="endAddress" name="eAddress" value="Ziel"><br><br>
-  <label for="lname">Zielort:</label><br>
-  <input type="text" id="time" name="pickuptime" value="Ziel"><br><br>
-  <label for="pickuptime">startbereit ab</label><br> 
- <input type="submit" value="Submit">
-</form> 
+  const ACCESS_TOKEN = 'pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA';
+      mapboxgl.accessToken = ACCESS_TOKEN;
+      const map = new mapboxgl.Map({
+          container: 'map',
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [11.912610, 50.312970],
+          zoom: 8.8
+      });
 
-<p></p>
+      window.addEventListener('load', () => {
+          const searchBoxStart = new MapboxSearchBox();
+          searchBoxStart.accessToken = ACCESS_TOKEN;
+          searchBoxStart.options = {
+              types: 'address,poi',
+              proximity: [11.912610, 50.312970]
+          };
+          searchBoxStart.marker = true;
+          searchBoxStart.mapboxgl = mapboxgl;
+          map.addControl(searchBoxStart);
+
+/*
+          const searchBoxDest = new MapboxSearchBox();
+          searchBoxDest.accessToken = ACCESS_TOKEN;
+          searchBoxDest.options = {
+              types: 'address,poi',
+              proximity: [11.912610, 50.312970]
+          };
+          searchBoxDest.marker = true;
+          searchBoxDest.mapboxgl = mapboxgl;
+          map.addControl(searchBoxDest);
+*/
+      });
+</script>
 
 </body>
 </html>
