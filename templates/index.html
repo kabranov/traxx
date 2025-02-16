@@ -38,6 +38,7 @@
 
 </head>
 <body>
+
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
@@ -51,7 +52,6 @@
 
 
 <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
-
     <div class="wmax600 mx-auto">
         <div class="address-page">
             <img src="{{url_for('static', filename='Traxx_Logo.jpeg')}}" alt="Traxx_Logo" style="width:128px;height:128px;">
@@ -62,17 +62,12 @@
 
 
 <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
-
     <div class="wmax600 mx-auto">
         <div class="address-page">
-
             <h3 class="txt-l txt-bold mb6"><strong> </strong></h3>
-
             <h4 class="txt-l txt-bold mb6">Zeit</h4>
             <!-- Date-Time Picker Input -->
             <input type="text" id="datetime-picker" placeholder="Wählen Sie ein Datum und eine Uhrzeit">
-
-
             <p id="output"></p>
         </div>
     </div>
@@ -85,10 +80,6 @@
 
             <!-- address form with `autocomplete` attributes on each address input -->
             <form class="flex flex--column">
-                <div class="relative color-gray">
-                </div>
-
-
                 <!-- address-level2, address-level1, postal-code -->
                 <div class="grid grid--gut12 mb12">
                     <div class="col w-1/2" >
@@ -112,16 +103,10 @@
 
         <div class="address-page">
             <h4 class="txt-l txt-bold mb6">Zielort</h4>
-
             <!-- address form with `autocomplete` attributes on each address input -->
             <form id="destination" class="flex flex--column">
-
-
                 <!-- address-line1 with search icon -->
                 <label class="txt-s txt-bold color-gray mb3">Startort</label>
-                <div class="relative color-gray">
-                </div>
-
                 <!-- address-level2, address-level1, postal-code -->
                 <div class="grid grid--gut12 mb12">
                     <div class="col w-1/2">
@@ -159,8 +144,8 @@
         </div>
 
 
-        <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
 
+        <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
             <div class="wmax600 mx-auto">
                 <div class="address-page">
                     <h3 class="txt-l txt-bold mb6"><strong> Passende Passagiere</strong></h3>
@@ -169,25 +154,25 @@
         </div>
 
 
-
-<div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
-    <div class="wmax800 mx-auto">
-        <div class="address-page">
-            <table id="gallery">
-                    <thead>
-                    <th> Passagier Nummer </th>
-                    <th> Startpunkt </th>
-                    <th> Ziel </th>
-                    <th> Startzeit </th>
-                    <th> Mitfahrer </th>
-                    <th> Gepäck </th>
-                    </thead>
-            </table>
+        <div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
+            <div class="wmax800 mx-auto">
+                <div class="address-page">
+                    <hr>
+                    <table id="gallery">
+                            <thead>
+                            <th> Passagier Nummer </th>
+                            <th> Startpunkt </th>
+                            <th> Ziel </th>
+                            <th> Startzeit </th>
+                            <th> Mitfahrer </th>
+                            <th> Gepäck </th>
+                            </thead>
+                    </table>
+                </div>
+            </div>
         </div>
-    </div>
 </div>
-
-
+</div>
 
 
 <script>
@@ -224,7 +209,6 @@
             console.log(mapAddressStart.get("address"));
             console.log(mapAddressDest.get("address"));
 
-
             console.log(key, value[1][2]);
             counter= counter+1;
 
@@ -238,7 +222,6 @@
             let c5 = row.insertCell(4);
             let c6 = row.insertCell(5);
 
-            //const cell = row.insertCell();
 
             // Create an image element
             const img = document.createElement("img");
@@ -298,6 +281,11 @@
             c3.innerText = mapAddressDest.get("address");
             c4.innerText = mapAddressStart.get("starttime");
             //c5.innerText = img;
+
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            c1.appendChild(checkbox);
+            row.insertBefore(c1, row.firstChild);
 
         })
 
