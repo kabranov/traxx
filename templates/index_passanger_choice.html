@@ -61,106 +61,20 @@
 </div>
 
 
-<div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
-    <div class="wmax600 mx-auto">
-        <div class="address-page">
-            <h3 class="txt-l txt-bold mb6"><strong> </strong></h3>
-            <h4 class="txt-l txt-bold mb6">Zeit</h4>
-            <!-- Date-Time Picker Input -->
-            <input type="text" id="datetime-picker" placeholder="Wählen Sie ein Datum und eine Uhrzeit">
-            <p id="output"></p>
-        </div>
-    </div>
-</div>
-
-<div class="round border border--gray-lighter px12 py24" style="min-height: 550px;">
-    <div class="wmax600 mx-auto">
-        <div class="address-page">
-            <h4 class="txt-l txt-bold mb6">Startort</h4>
-
-            <!-- address form with `autocomplete` attributes on each address input -->
-            <form class="flex flex--column">
-                <!-- address-level2, address-level1, postal-code -->
-                <div class="grid grid--gut12 mb12">
-                    <div class="col w-1/2" >
-                        <input id="address1_input" class="input mb11" autocomplete="address-line1" name="address-line1" required=""  placeholder="Addresse" >
-                    </div>
-                    <div class="col w-1/3" >
-                        <!--label class="txt-s txt-bold color-gray mb3">Ort</label-->
-                        <input class="input mb12" autocomplete="address-level2" name="address-level2" required="" contenteditable="false" placeholder="Ort" readonly="readonly" style="border:none;background-color:white; border-color:white;" tabindex="-1">
-                    </div>
-                    <div class="col w-1/6">
-                        <!--label class="txt-s txt-bold color-gray mb3">Postleitzahl</label-->
-                        <input class="input mb14" autocomplete="postal-code" name="postal-code" contenteditable="false" placeholder="Postleitzahl" readonly="readonly" style="border:0px;background-color:white; border-color:white;" tabindex="-1">
-                    </div>
-                </div>
-                <input type="hidden" class="input mb13" autocomplete="address-level1" name="address-level1" required="" contenteditable="false" placeholder="Bundesland" readonly="readonly"style="border:0px;background-color:white; border-color:white;" tabindex="-1">
-                <!-- minimap for visual confirmation-->
-                <div id="minimap-container1" class="none h180 wfull relative mt18 mb60"></div>
-            </form>
-        </div>
-
-
-        <div class="address-page">
-            <h4 class="txt-l txt-bold mb6">Zielort</h4>
-            <!-- address form with `autocomplete` attributes on each address input -->
-            <form id="destination" class="flex flex--column">
-                <!-- address-line1 with search icon -->
-                <label class="txt-s txt-bold color-gray mb3">Startort</label>
-                <!-- address-level2, address-level1, postal-code -->
-                <div class="grid grid--gut12 mb12">
-                    <div class="col w-1/2">
-                        <!--label class="txt-s txt-bold color-gray mb12">Ort</label-->
-                        <input id="address2_input" class="input mb21" autocomplete="address-line1" name="address-line1" required=""  placeholder="Addresse">
-                    </div>
-                    <div class="col w-1/3">
-                        <!--label class="txt-s txt-bold color-gray mb12">Ort</label-->
-                        <input class="input mb22" autocomplete="address-level2" name="address-level2" required=""  placeholder="Ort" readonly="readonly" style="border:0px;background-color:white;border-color:white;" tabindex="-1">
-                    </div>
-
-                    <div class="col w-1/6">
-                        <!--label class="txt-s txt-bold color-gray mb14">Postleitzahl</label-->
-                        <input class="input mb24" autocomplete="postal-code" name="postal-code"  required="" placeholder="Postleitzahl" readonly="readonly" style="border:0px;background-color:white;border-color:white;" tabindex="-1">
-                    </div>
-                </div>
-                <input type="hidden" class="input mb23" autocomplete="address-level1" name="address-level1" required=""  placeholder="Bundesland" readonly="readonly" style="border:0px;background-color:white;border-color:white;" tabindex="-1">
-
-
-                <!-- minimap for visual confirmation-->
-                <div id="minimap-container2" class="none h180 wfull relative mt18 mb60"></div>
-
-                <!-- continue button -->
-
-                <div class="mb12 submit-btns align-r">
-                    <button type="submit" class="btn round submit-order-button" id="coordSubmit" name="coordSubmit">
-                        Startort und Zielort speichern
-                    </button>
-                </div>
-
-            </form>
-            <strong><bold></bold><p id="result"></p></bold></strong>
-            <!-- end address form -->
-
-        </div>
-
-
-
-
         <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
             <div class="wmax600 mx-auto">
                 <div class="address-page">
                     <form class="flex flex--column" name="passengersList" id="passengersList">
-                        <!--
+                    <!--h3 class="txt-l txt-bold mb6"><strong> Passende Passagiere</strong></h3-->
+
                             <button type="submit" class="btn round submit-order-button" id="submitPassengers" name="submitPassengers">
                                 Passagiere bestätigen
                             </button>
-                         -->
                     </form>
                 </div>
             </div>
         </div>
 
-<!--
 
         <div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
             <div class="wmax800 mx-auto">
@@ -180,8 +94,6 @@
             </div>
         </div>
 </div>
-
--->
 </div>
 
 
@@ -485,8 +397,8 @@ async function doesFileExist(urlToFile) {
 
 
 
-            location.href = "/passenger_choice";
-            location.replace("/passenger_choice");
+          //  location.href = "/manager";
+          //  location.replace("/manager");
            // restartExample();
 
         });
@@ -546,7 +458,129 @@ async function doesFileExist(urlToFile) {
                     }
                 }
             );
+
+            load_gallery();
         })
+
+
+function  load_gallery (){
+
+     fetch('/get_all')
+      .then(response => response.json())
+      .then(json_data => {
+
+        const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
+        for (entry of arr) {
+            for( part of entry){
+                var requestNum = part[0];  //.get("request_number");
+            }
+            requestMap.set(requestNum, entry);
+
+        }
+
+        let counter = 0;
+        let table = document.getElementById("gallery");
+        requestMap.forEach((value, key) => {
+
+            //console.log('=======>>', key);
+            console.log(value, key);
+            let currNumber = value[0];
+            console.log(key, currNumber);
+
+            let mapAddressStart = new Map(Object.entries(value[1][1]));
+            let mapAddressDest = new Map(Object.entries(value[1][2]));
+            console.log(mapAddressStart.get("address"));
+            console.log(mapAddressDest.get("address"));
+
+            console.log(key, value[1][2]);
+            counter= counter+1;
+
+            let row = table.insertRow(-1);
+            let c1 = row.insertCell(0);
+            let c2 = row.insertCell(1);
+            let c3 = row.insertCell(2);
+            let c4 = row.insertCell(3);
+            //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
+            //var myImage.src="../images/12_luggage.jpg"
+            let c5 = row.insertCell(4);
+            let c6 = row.insertCell(5);
+
+
+            // Create an image element
+            const img = document.createElement("img");
+            img.src = "./images/defalaut_passanger.jpg";
+            img.alt = "defalaut passanger image";
+
+            const hostname = window.location.hostname;
+            console.log(hostname);
+
+            var fileNameLuggageString="/images/"+LUGGAGE_IMAGE+currNumber+IMAGE_EXTENTION;
+
+            console.log("===>"+fileNameLuggageString);
+
+            doesFileExist(fileNameLuggageString)
+            .then(exists => {
+                if (exists) {
+                    console.log("File exists!");
+                     img.src = fileNameLuggageString
+                } else {
+                    console.log("File does not exist!");
+                }
+            });
+
+            // Add the image to the cell
+            c6.appendChild(img);
+
+
+
+            // Create an image element
+            const img1 = document.createElement("img");
+            img1.src = "./images/default_luggage.jpg";
+            img1.alt = "defalaut luggage image";
+
+            var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
+
+            console.log(fileNamePersonString);
+
+            doesFileExist(fileNamePersonString)
+            .then(exists => {
+                if (exists) {
+                    console.log("File exists!");
+                     img1.src = fileNamePersonString
+                } else {
+                    console.log("File does not exist!");
+                }
+            });
+
+
+
+            // Add the image to the cell
+            c5.appendChild(img1);
+
+
+            // Add data to c1 and c2
+            c1.innerText = currNumber;
+            c2.innerText = mapAddressStart.get("address");
+            c3.innerText = mapAddressDest.get("address");
+            c4.innerText = mapAddressStart.get("starttime");
+            //c5.innerText = img;
+
+            var radioString = "input";
+            let checkbox = document.createElement(radioString);
+            checkbox.type = "checkbox";
+            c1.appendChild(checkbox);
+            row.insertBefore(c1, row.firstChild);
+
+        })
+
+
+      })
+      .catch(error => {
+        // Handle any errors during the fetch
+        console.error('Error:', error);
+      });
+
+ }
 
 </script>
 </body>

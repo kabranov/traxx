@@ -169,7 +169,7 @@
 
         })
 
-
+        // window.location.reload();
       })
       .catch(error => {
         // Handle any errors during the fetch
@@ -190,66 +190,7 @@ async function doesFileExist(urlToFile) {
 
 
 
-/*
-          images.forEach((image, index) => {
-                    if (index % 2 === 0) {
-                        row = document.createElement('tr');
-                        gallery.appendChild(row);
-                    }
 
-                    const cell = document.createElement('td');
-
-                    const container = document.createElement('div');
-                    container.classList.add('image-container');
-
-                    const img = document.createElement('img');
-                    img.src = `/images/${image}`;
-
-                    const name = document.createElement('div');
-                    name.classList.add('image-name');
-                    name.textContent = image;
-
-                    container.appendChild(img);
-                    container.appendChild(name);
-                    cell.appendChild(container);
-                    row.appendChild(cell);
-                });
-*/
-
-/*
-        fetch('/images')
-            .then(response => response.json())
-            .then(images => {
-                const gallery = document.getElementById('gallery');
-                gallery.innerHTML = '';
-
-                let row;
-                images.forEach((image, index) => {
-                    if (index % 2 === 0) {
-                        row = document.createElement('tr');
-                        gallery.appendChild(row);
-                    }
-
-                    const cell = document.createElement('td');
-
-                    const container = document.createElement('div');
-                    container.classList.add('image-container');
-
-                    const img = document.createElement('img');
-                    img.src = `/images/${image}`;
-
-                    const name = document.createElement('div');
-                    name.classList.add('image-name');
-                    name.textContent = image;
-
-                    container.appendChild(img);
-                    container.appendChild(name);
-                    cell.appendChild(container);
-                    row.appendChild(cell);
-                });
-            })
-            .catch(error => console.error('Error loading images:', error));
-    */
 </script>
 </body>
 </html>
