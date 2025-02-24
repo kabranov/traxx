@@ -32,6 +32,10 @@ http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/manager
 Example search box (find Point of Interest)
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000//offer/
 
+```
+Application in Google store
+https://play.google.com/apps/internaltest/4701729781484107278
+```
 
 ```
 
