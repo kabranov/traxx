@@ -188,14 +188,17 @@ def save_coordinates():
             "address": dest_address_string,
             "postal-code":dest_postal_code,
             "city":dest_city,
-            "state":dest_state,
-            "route":string_disctance
+            "state":dest_state
+        }
+        route_data = {
+            "distance" : string_disctance,
+            "price":0
         }
 
 
         # Processing of data
 
-        new_coordinate = pass_data,new_coordinate_start,new_coordinate_dest
+        new_coordinate = pass_data,new_coordinate_start,new_coordinate_dest,route_data
 
 
         start_coordinates.append(new_coordinate_start)
@@ -339,14 +342,16 @@ def save_coordinates_driver():
             "address": dest_address_string,
             "postal-code":dest_postal_code,
             "city":dest_city,
-            "state":dest_state,
-            "route":string_disctance
+            "state":dest_state
         }
-
+        route_data = {
+            "distance" : string_disctance,
+            "price":0
+        }
 
         # Processing of data
 
-        new_coordinate = pass_data,new_coordinate_start,new_coordinate_dest
+        new_coordinate = pass_data,new_coordinate_start,new_coordinate_dest,route_data
 
 
         start_coordinates.append(new_coordinate_start)
