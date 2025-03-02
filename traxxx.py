@@ -33,7 +33,9 @@ def manager():
 
 @app.route('/passenger_choice')
 def passanger_choice():
-    return render_template('index_passanger_choice.html')
+    query = request.args.get('driverId')  # Get query parameter `q`
+    print(f"Search query: {query}")  # Print in server logs
+    return render_template('index_passanger_choice.html',driverId=query)
 
 
 @app.route('/offer/',methods=['GET'])
@@ -170,7 +172,8 @@ def save_coordinates():
         print(json_map['routes'][0].get('distance'))
 
         pass_data = {
-            "request_number" : num_requests["num_requests"]+1
+            "request_number" : num_requests["num_requests"]+1,
+            "type":"passenger"
         }
         new_coordinate_start = {
             "long": coords_start[1],
@@ -191,7 +194,7 @@ def save_coordinates():
             "state":dest_state
         }
         route_data = {
-            "distance" : string_disctance,
+            "distance" : map_distance_str,
             "price":0
         }
 
@@ -324,7 +327,8 @@ def save_coordinates_driver():
         print(json_map['routes'][0].get('distance'))
 
         pass_data = {
-            "request_number" : num_requests["num_requests"]+1
+            "request_number" : num_requests["num_requests"]+1,
+            "type":"driver"
         }
         new_coordinate_start = {
             "long": coords_start[1],
@@ -390,7 +394,8 @@ def save_coordinates_driver():
         #return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"=  Bitte zeigen Sie diese Bestellnummer dem Fahrer am Abholort.  Ihre Abholzeut ist "+ selected_time + ".", 201
         #return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
 
-        return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
+        ###return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km "+ "request="+str(num_requests["num_requests"]),201
+        return str(num_requests["num_requests"]),201
         #print("======================== Rendering")
         #return render_template('index_manager.html',title='Driver Page')
         #return redirect(url_for("manager"))
