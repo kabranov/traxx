@@ -37,6 +37,17 @@ def passanger_choice():
     print(f"Search query: {query}")  # Print in server logs
     return render_template('index_passanger_choice.html',driverId=query)
 
+@app.route('/get_distance')
+def distance_between():
+    startId = request.args.get('startId')  # Get query parameter `q`
+    destId = request.args.get('destId')  # Get query parameter `q`
+    print(f"startId: {startId}")  # Print in server logs
+    print(f"destId: {destId}")  # Print in server logs
+    #return render_template('index_passanger_choice.html',startId=startId,destId=destId)
+    result = get_distance_request(startId,destId)
+    print("distance_between="+str(result))
+    return str(result)
+
 
 @app.route('/offer/',methods=['GET'])
 def offer():
@@ -439,6 +450,49 @@ def haversine(lat1, lon1, lat2, lon2):
     # Radius of Earth in kilometers (mean radius = 6,371 km)
     radius = 6371.0
     return radius * c
+
+def get_distance_request(id1,id2):
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+
+        params = {
+            'access_token': 'pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA',
+        }
+
+        #coordinates
+        long_start = coordinates[int(id1)][1].get("long")
+        lat_start = coordinates[int(id1)][1].get("lat")
+
+        long_dest = coordinates[int(id2)][1].get("long")
+        lat_dest = coordinates[int(id2)][1].get("lat")
+        print("long_start=",long_start)
+        print("lat_start=",lat_start)
+        print("long_dest=",long_dest)
+        print("lat_dest=",lat_dest)
+
+
+        data = 'coordinates='+str(long_start)+','+str(lat_start)+';'+str(long_dest)+','+str(lat_dest)+'&steps=true&waypoints=0;1&waypoint_names=Home;Work&banner_instructions=true'
+        print(data)
+
+        response = requests.post('https://api.mapbox.com/directions/v5/mapbox/driving', params=params, headers=headers, data=data)
+
+        json_map = response.json()
+
+        if not 'routes' in json_map or len(json_map['routes'])==0:
+            return "Keine Route zwischen Start und Ziel existiert. Bitte überprüfen Sie Ihre Start- und Zieladresse. ",201
+
+        map_distance_json = json_map['routes'][0].get('distance')
+        map_distance_float = float(map_distance_json)/1000.0
+        map_distance_str = "{:.1f}".format(float(map_distance_float))
+
+        print(json_map['routes'][0].get('distance'))
+        return json_map['routes'][0].get('distance')
+
+
+
+
+
 
 
 if __name__ == '__main__':
