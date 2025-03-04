@@ -32,6 +32,9 @@ http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/manager
 Example search box (find Point of Interest)
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000//offer/
 
+Example - distance between requests from http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_all
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_distance?startId=2&destId=1
+
 ```
 Application in Google store
 https://play.google.com/apps/internaltest/4701729781484107278
