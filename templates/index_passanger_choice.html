@@ -211,14 +211,40 @@
 
                 // Add the image to the cell
                 c5.appendChild(img1);
+                let detour_km=0;
+                getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
+                console.log("DETUOR_URL="+getDistance);
+                fetch(getDistance).then(response => response.json()).then(json_data =>
+                {
+                    jsonStr = json_data.replace(/'/g, '"');
+                    obj = JSON.parse(jsonStr);
+                    mapdetour = new Map(Object.entries(obj));
+                    detour_km = mapdetour.get("detour");
+                    console.log("mapdetour 1==>"+detour_km);
 
-
+                 console.log("mapdetour 2==>"+detour_km);
                 // Add data to c1 and c2
                 c1.innerText = currNumber;
                 c2.innerText = mapAddressStart.get("address");
                 c3.innerText = mapAddressDest.get("address");
                 c4.innerText = mapAddressStart.get("starttime")+"\n"+mapDistancePrice.get("distance")+" km\n"
-                                    + mapDistancePrice.get("price")+" Euro";
+                                    //+ mapDistancePrice.get("price")+" Euro"
+                                    + "Unweg "+detour_km+" km";
+
+                }).catch(error => {
+                    // Handle any errors during the fetch
+                console.error('Error:', error);
+                });
+
+/*
+                 console.log("mapdetour 2==>"+detour_km);
+                // Add data to c1 and c2
+                c1.innerText = currNumber;
+                c2.innerText = mapAddressStart.get("address");
+                c3.innerText = mapAddressDest.get("address");
+                c4.innerText = mapAddressStart.get("starttime")+"\n"+mapDistancePrice.get("distance")+" km\n"
+                                    + mapDistancePrice.get("price")+" Euro"+ "\n"+detour_km+" km";
+*/
                 //c5.innerText = img;
 
                 var radioString = "input";
