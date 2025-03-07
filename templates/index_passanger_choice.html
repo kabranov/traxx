@@ -231,6 +231,13 @@
                                     //+ mapDistancePrice.get("price")+" Euro"
                                     + "Unweg "+detour_km+" km";
 
+                var radioString = "input";
+                let checkbox = document.createElement(radioString);
+                checkbox.type = "checkbox";
+                c1.appendChild(checkbox);
+                row.insertBefore(c1, row.firstChild);
+
+
                 }).catch(error => {
                     // Handle any errors during the fetch
                 console.error('Error:', error);
@@ -246,12 +253,13 @@
                                     + mapDistancePrice.get("price")+" Euro"+ "\n"+detour_km+" km";
 */
                 //c5.innerText = img;
-
+/*
                 var radioString = "input";
                 let checkbox = document.createElement(radioString);
                 checkbox.type = "checkbox";
                 c1.appendChild(checkbox);
                 row.insertBefore(c1, row.firstChild);
+ */
             }
 
         })
