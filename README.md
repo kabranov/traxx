@@ -93,7 +93,7 @@ TO DO:
 6. Driver confirms booking (chat opens)
 7. App notificatis/web page.
 
-DID NOT DISCUSS YET
-7. Logins
-8. Security
-9. Optimization
+DID NOT DISCUSS YET:
+8. Logins
+9. Security 
+10. Optimization
