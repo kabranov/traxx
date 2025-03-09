@@ -76,3 +76,24 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/saveCoord
 
 }'
 ```
+
+### 5). Project progress
+
+DONE     
+1. Passenger submits start/destination
+2. Driver submits start/destination
+3. Driver sees passenger requests
+
+IN PROGRESS:
+3. Driver  submits offer
+
+TO DO:
+4. Passenger sees driver offer
+5. Passenger books
+6. Driver confirms booking (chat opens)
+7. App notificatis/web page.
+
+DID NOT DISCUSS YET
+7. Logins
+8. Security
+9. Optimization
