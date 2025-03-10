@@ -85,15 +85,15 @@ DONE
 3. Driver sees passenger requests
 
 IN PROGRESS:
-3. Driver  submits offer
+4 Driver  submits offer
 
-TO DO:
+TO DO
 4. Passenger sees driver offer
 5. Passenger books
 6. Driver confirms booking (chat opens)
 7. App notificatis/web page.
 
-DID NOT DISCUSS YET:
+DID NOT DISCUSS YET
 8. Logins
-9. Security 
-10. Optimization
+9. Security
+10.Optimization
