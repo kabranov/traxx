@@ -84,8 +84,8 @@ DONE
 2. Driver submits start/destination
 3. Driver sees passenger requests
 
-IN PROGRESS:
-4 Driver  submits offer
+IN PROGRESS
+4. Driver  submits offer
 
 TO DO
 4. Passenger sees driver offer
