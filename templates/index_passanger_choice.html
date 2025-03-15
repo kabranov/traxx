@@ -386,6 +386,38 @@ async function doesFileExist(urlToFile) {
           }
         });
 
+
+          const payload = {driver: driverId, passengers:selectedNumbers};
+          const payloadBody = JSON.stringify(payload);
+          console.log("payloadBody:"+payloadBody);
+          fetch("/rideOffers", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: payloadBody
+          })
+          .then(response => {
+            // Handle the response from the server
+            if (response.ok) {
+              console.log("Form submitted successfully");
+              const json = response.text();
+              console.log("JSON:"+json);
+              document.getElementById('submitPassengers').disabled = true;
+              //document.getElementById("result").textContent = json;
+              return json;
+            } else {
+              console.error("Form submission failed");
+            }
+          }).then((data) => {
+            console.log("DATA:"+data);
+            //document.getElementById("result").textContent = data;
+          });
+
+
+
+
+
         // Log the selected raw numbers
         console.log(selectedNumbers);
         alert(selectedNumbers);

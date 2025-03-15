@@ -105,6 +105,53 @@ def get_image(filename):
     IMAGE_FOLDER = IMAGE_DIR +'/images'
     return send_from_directory(IMAGE_FOLDER, filename)
 
+@app.route('/rideOffers', methods=['POST'])
+def handle_ride():
+    try:
+        data = request.get_json()
+
+        # Extract driver and passengers
+        driver_id = data.get("driver")
+        passengers = data.get("passengers")
+        print(driver_id)
+        print(passengers)
+        if not driver_id or not isinstance(passengers, list):
+            return jsonify({"error": "Invalid input format"}), 400
+
+        print("driverId=", coordinates.get(int(driver_id))[0])
+        passIdList = list(map(int, passengers))
+
+        print("passIdList=", passIdList)
+
+
+        coordinates.get(int(driver_id))[0]["offersSentTo"] = passIdList
+        print("offersSentTo:",coordinates.get(int(driver_id))[0]["offersSentTo"])
+        print("passIdList=", passIdList)
+        for passId in passIdList:
+            print("passId:",passId)
+            print("==>passId:",coordinates.get(int(passId))[0])
+            print("==>passId:",coordinates.get(int(passId))[0].get("type"))
+            #print("==>offersFrom:",coordinates.get(int(passId))[0]["offersFrom"])
+            if coordinates.get(int(passId))[0].get("offersFrom") == None:
+                coordinates.get(int(passId))[0]["offersFrom"] = []
+            coordinates.get(int(passId))[0].get("offersFrom").append(driver_id)
+
+
+        # Example response
+        response = {
+            "message": "Ride request received",
+            "driver": driver_id
+            #"passengers": list
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
+
 
 @app.route('/saveCoordinates', methods=['POST'])
 def save_coordinates():
