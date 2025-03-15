@@ -76,6 +76,22 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/saveCoord
 
 }'
 ```
+### 5). Curl command for ride offers
+
+Driver with ID 3 want to add passengers 2 and 1 to the database.
+
+```
+curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/rideOffers' \
+--header 'Content-Type: application/json' \
+--data '{
+    "driver": "3",
+    "passengers": [
+        "2",
+        "1"
+    ]
+}'
+```
+
 
 ### 5). Project progress
 
