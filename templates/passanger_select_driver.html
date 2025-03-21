@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+
+    <title>Passagiere und Gepäck</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        img {
+            max-width: 200px;
+            height: auto;
+            border: 0px solid #ccc;
+            border-radius: 5px;
+        }
+        .image-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+
+    <!-- Default styling. Feel free to remove! -->
+    <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+    <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.24/web.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+
+
+<!-- =================================== -->
+<h1>Fahrer Angebot auswahlen</h1>
+
+
+<div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
+    <div class="wmax600 mx-auto">
+        <div class="address-page">
+            <img src="{{url_for('static', filename='Traxx_Logo.jpeg')}}" alt="Traxx_Logo" style="width:128px;height:128px;">
+            <h3 class="txt-l txt-bold mb6"><strong> TRAXX Mitfahrer Konsole</strong></h3>
+            <strong><bold></bold><p id="requestId"></p></bold></strong>
+
+            <form id="myForm">
+                <label for="passenger_id"><strong><bold>Mitfahrer referenznummer:</bold></strong></label>
+                <input type="text" id="passenger_id" name="passenger_id" required>
+
+                <button type="submit" class="btn round submit-order-button"><strong><bold>Submit</bold></strong></button>
+            </form>
+
+            <p id="responseMessage"></p>
+        </div>
+    </div>
+</div>
+
+        <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
+            <div class="wmax600 mx-auto">
+                <div class="address-page">
+                    <form class="flex flex--column" name="passengersList" id="passengersList">
+                    <!--h3 class="txt-l txt-bold mb6"><strong> Passende Passagiere</strong></h3-->
+
+                            <button type="submit" class="btn round submit-order-button" id="submitDriver" name="submitDriver">
+                                Angebot annehemen
+                            </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
+            <div class="wmax800 mx-auto">
+                <div class="address-page">
+                    <hr>
+                    <table id="gallery">
+                            <thead>
+                            <th> Fahrer Nummer </th>
+                            <th> Price/Zeit </th>
+                            <th> Fahrerphoto</th>
+                            </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+
+
+<script>
+
+   let passenger_id = 0;
+   let requestMap = new Map();
+   var PASSENGER_IMAGE="passenger_image_";
+   var IMAGE_EXTENTION = ".jpeg";
+
+   document.getElementById("myForm").addEventListener("submit", function(event) {
+           event.preventDefault(); // Prevent default form submission
+
+           passenger_id = document.getElementById("passenger_id").value;
+           document.getElementById("responseMessage").innerText = ""+passenger_id;
+
+
+       fetch('/get_all')
+         .then(response => response.json())
+         .then(json_data => {
+           requestMap = new Map();
+           const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
+           for (entry of arr) {
+               for( part of entry){
+                   var requestNum = part[0];  //.get("request_number");
+               }
+               requestMap.set(requestNum, entry);
+
+           }
+
+           let counter = 0;
+           let table = document.getElementById("gallery");
+            while (table.rows.length > 1) {  // Keeps the first row (assumed header)
+                table.deleteRow(1); // Always delete the second row since index shifts
+            }
+
+           requestMap.forEach((value, key) => {
+
+               console.log(value, key);
+               let currNumber = value[0];
+               console.log(key, currNumber);
+
+               let map1 = new Map(Object.entries(value[1][0]));
+
+
+               if('driver'===map1.get("type")) {
+                 if(map1.get("offersSentTo").includes(parseInt(passenger_id))){
+                   let mapAddressStart = new Map(Object.entries(value[1][1]));
+                   let mapAddressDest = new Map(Object.entries(value[1][2]));
+                   console.log(mapAddressStart.get("address"));
+                   console.log(mapAddressDest.get("address"));
+
+                   let mapDistancePrice = new Map(Object.entries(value[1][3]));
+                   //console.log('=======>>', mapDistancePrice.get("distance"));
+
+                   console.log(key, value[1][2]);
+                   counter= counter+1;
+
+                   var row = table.insertRow(-1);
+                   var c1 = row.insertCell(0);
+                   var c2 = row.insertCell(1);
+                   var c3 = row.insertCell(2);
+                   var c4 = row.insertCell(3);
+
+                   var c5 = row.insertCell(4);
+                   var c6 = row.insertCell(5);
+
+
+                   // Create an image element
+                   const img = document.createElement("img");
+                   img.src = "./images/default_luggage.jpg";
+                   img.alt = "defalaut passanger image";
+                   img.width = 150;
+
+                   const hostname = window.location.hostname;
+                   console.log(hostname);
+
+
+                   // Add the image to the cell
+                   c3.appendChild(img);
+
+
+                   var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
+
+                   console.log(fileNamePersonString);
+
+                   doesFileExist(fileNamePersonString)
+                   .then(exists => {
+                       if (exists) {
+                           console.log("File exists!");
+                            img1.src = fileNamePersonString
+                       } else {
+                           console.log("File does not exist!");
+                       }
+                   });
+
+
+                   var cellText = "";
+                   let detour_km=0;
+                   getDistance="/get_distance?startId="+currNumber+"&destId="+passenger_id;
+                   console.log("DETUOR_URL="+getDistance);
+                   fetch(getDistance).then(response => response.json()).then(json_data =>
+                   {
+                       jsonStr = json_data.replace(/'/g, '"');
+                       obj = JSON.parse(jsonStr);
+                       mapdetour = new Map(Object.entries(obj));
+                       detour_km = mapdetour.get("detour");
+                       console.log("mapdetour 1==>"+detour_km);
+                       console.log("mapdetour 2==>"+detour_km);
+                       // Add data to c1 and c2
+
+                       cellText = mapAddressStart.get("starttime")+"\n"+mapDistancePrice.get("distance")+" km\n"
+                                       //+ mapDistancePrice.get("price")+" Euro"
+                                       + "Umweg "+detour_km+" km";
+                        console.log("cellText 1==>"+cellText);
+                        c2.innerText = cellText;
+
+                   }).catch(error => {
+                       // Handle any errors during the fetch
+                        console.error('Error:', error);
+                   });
+
+
+
+
+                   c1.innerText = currNumber;
+                   //c2.innerText = mapDistancePrice.get("distance")+" Euro"+"\n"+value[1][1]['starttime'];
+                   console.log("cellText 2==>"+cellText);
+                   //c2.innerText = cellText;
+                   //Address in not needed
+                   //c2.innerText = mapAddressStart.get("address");
+                   //c3.innerText = mapAddressDest.get("address");
+
+                   var radioString = "input";
+                   let checkbox = document.createElement(radioString);
+                   checkbox.type = "checkbox";
+                   c1.appendChild(checkbox);
+                   row.insertBefore(c1, row.firstChild);
+                    }
+
+
+
+
+               }
+
+           })
+
+
+     })
+     .catch(error => {
+       // Handle any errors during the fetch
+       console.error('Error:', error);
+     });
+  });
+
+
+
+async function doesFileExist(urlToFile) {
+ try {
+   const response = await fetch(urlToFile, { method: 'GET' });
+   return response.ok; // Returns true if status is 200-299
+ } catch (error) {
+   return false;
+ }
+}
+
+
+
+
+
+
+   const ACCESS_TOKEN = 'pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA';
+
+       const selectedNumbers = [];
+       let autofillCollection;
+       let minimap;
+
+
+       // Add geocoder (autocomplete search box)
+       const geocoder = new MapboxGeocoder({
+           accessToken: mapboxgl.accessToken,
+           mapboxgl: mapboxgl,
+           placeholder: 'Search for places...',
+           types: 'poi', // Focus on Points of Interest
+           countries: 'us', // Restrict to specific country (optional)
+           bbox: [-180, -85, 180, 85], // Optional bounding box filter
+           proximity: { longitude: -74.006, latitude: 40.7128 } // Search near NYC initially
+       });
+
+
+
+       // show the minimap
+       function showMap1() {
+           const el = document.getElementById("minimap-container1");
+           el.classList.remove("none");
+       }
+
+       function showMap2() {
+           const el = document.getElementById("minimap-container2");
+           el.classList.remove("none");
+       }
+
+
+
+       function restartExample() {
+           window.location.reload();
+       }
+
+
+  let selectedDateTime = null;
+
+   // Initialize Flatpickr with German localization
+   flatpickr("#datetime", {
+       enableTime: true,
+       dateFormat: "d.m.Y H:i", // German date format
+       locale: "de" // Set locale to German
+   });
+
+   flatpickr("#datetime-picker", {
+     enableTime: true,
+     dateFormat: "d.m.Y H:i",
+     time_24hr: true,
+     locale: "de",
+     onChange: function(selectedDates, dateStr, instance) {
+       // Save the selected date and time in a variable
+       selectedDateTime = dateStr;
+       console.log("Selected Date and Time:", selectedDateTime);
+     }
+   });
+
+
+   const form2= document.getElementById("passengersList");
+   //const nameInput = document.getElementById('submitPassengers');
+
+   form2.addEventListener("submit", (event) => {
+       event.preventDefault(); // Prevent the default form submission
+
+       var checkedBoxes = document.querySelectorAll('input:checked');
+
+       if (checkedBoxes.length === 0) {
+           // there are no checked checkboxes
+       alert('no checkboxes checked');
+       } else {
+           // there are some checked checkboxes
+       }
+
+
+       // Iterate through each checked checkbox
+       checkedBoxes.forEach(checkbox => {
+         // Get the parent row of the checkbox
+         const row = checkbox.closest('tr');
+
+       if (row) {
+           // The 'row' variable now holds the closest parent <tr> element
+           //alert("row="+row.cells[0].textContent);
+       } else {
+           // No parent <tr> element found
+           alert('No selection done');
+       }
+
+
+         // Extract the numeric value from the desired cell (e.g., second cell)
+         const numericValue = parseInt(row.cells[0].textContent);
+
+         // Add the numeric value to the array if it's a valid number
+         if (!isNaN(numericValue)) {
+           selectedNumbers.push(numericValue);
+         }
+       });
+
+
+         const payload = {driver: driverId, passengers:selectedNumbers};
+         const payloadBody = JSON.stringify(payload);
+         console.log("payloadBody:"+payloadBody);
+         fetch("/rideOffers", {
+           method: "POST",
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: payloadBody
+         })
+         .then(response => {
+           // Handle the response from the server
+           if (response.ok) {
+             console.log("Form submitted successfully");
+             const json = response.text();
+             console.log("JSON:"+json);
+             document.getElementById('submitPassengers').disabled = true;
+             //document.getElementById("result").textContent = json;
+             return json;
+           } else {
+             console.error("Form submission failed");
+           }
+         }).then((data) => {
+           console.log("DATA:"+data);
+           //document.getElementById("result").textContent = data;
+         });
+
+
+
+
+
+       // Log the selected raw numbers
+       console.log(selectedNumbers);
+       alert(selectedNumbers);
+
+
+   });
+
+
+   const form = document.getElementById("destination");
+
+   form.addEventListener("submit", (event) => {
+       event.preventDefault(); // Prevent the default form submission
+
+       const formData = new FormData(form); // Create a FormData object
+
+
+       formData["start_address"]= document.querySelector(".input.mb11").value;;
+       formData["start_postal-code"]= document.querySelector(".input.input.mb14").value;
+       formData["start_city"]= document.querySelector(".input.mb12").value;
+       formData["start_state"]= document.querySelector(".input.mb13").value;
+       formData["selected_date_time"]=selectedDateTime;
+       console.log(formData["start_address"]);
+       console.log(formData["start_postal-code"]);
+       console.log(formData["start_city"]);
+       console.log(formData["start_state"]);
+       console.log(formData["selected_date_time"]);
+
+
+       formData["dest_address"]= document.querySelector(".input.mb21").value;;
+       formData["dest_postal-code"]= document.querySelector(".input.input.mb24").value;
+       formData["dest_city"]= document.querySelector(".input.mb22").value;
+       formData["dest_state"]= document.querySelector(".input.mb23").value;
+       console.log(formData["dest_address"]);
+       console.log(formData["dest_postal-code"]);
+       console.log(formData["dest_city"]);
+       console.log(formData["dest_state"]);
+
+
+         fetch("/saveCoordinatesDriver", {
+           method: "POST",
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(formData)
+         })
+         .then(response => {
+           // Handle the response from the server
+           if (response.ok) {
+             console.log("Form submitted successfully");
+             const json = response.text();
+             console.log("JSON:"+json);
+             //document.getElementById("result").textContent = json;
+             return json;
+           } else {
+             console.error("Form submission failed");
+           }
+         }).then((data) => {
+           console.log("DATA:"+data);
+           document.getElementById("result").textContent = data;
+         });
+
+
+
+         //  location.href = "/manager";
+         //  location.replace("/manager");
+          // restartExample();
+
+       });
+
+
+
+
+       // Autofill initialization
+       window.addEventListener('load', function () {
+           mapboxsearch.config.accessToken = ACCESS_TOKEN;
+
+           // autofill() automatically binds address search to the address-line1 input
+            autofillCollection = mapboxsearch.autofill({
+                   options: { country: 'de' }
+               }
+           );
+
+           // initialize a minimap
+           minimap1 = new MapboxAddressMinimap();
+           //minimap1.canAdjustMarker = true;
+           minimap1.satelliteToggle = true;
+           minimap1.onSaveMarkerLocation = (lnglat) => {
+               console.log(`Marker moved to ${lnglat}`);
+           };
+
+           minimap2 = new MapboxAddressMinimap();
+           //minimap2.canAdjustMarker = true;
+           minimap2.satelliteToggle = true;
+           minimap2.onSaveMarkerLocation = (lnglat) => {
+               console.log(`Marker moved to ${lnglat}`);
+           };
+
+           // append the minimap to the page
+           const minimapContainer1 = document.getElementById("minimap-container1");
+           minimapContainer1.appendChild(minimap1);
+           const minimapContainer2 = document.getElementById("minimap-container2");
+           minimapContainer2.appendChild(minimap2);
+
+
+           // when the user selects a suggested address, show the minimap
+           autofillCollection.addEventListener(
+               "retrieve",
+               async (e) => {
+                    console.log( e)
+                       const currentTarget = e.currentTarget;
+                       console.log( e.target.id);
+                   if (e.target.id == "address1_input") {
+                       minimap1.feature = e.detail.features[0];
+                       showMap1();
+                       //const marker = new mapboxgl.Marker()
+                       //.setLngLat([-87.661557, 41.893748]) // Set marker coordinates
+                       //.addTo(map)
+                   }
+                   if (e.target.id == "address2_input") {
+                       minimap2.feature = e.detail.features[0];
+                       showMap2();
+                   }
+               }
+           );
+
+           load_gallery();
+       })
+
+
+function  load_gallery (){
+
+    fetch('/get_all')
+     .then(response => response.json())
+     .then(json_data => {
+
+       const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
+       for (entry of arr) {
+           for( part of entry){
+               var requestNum = part[0];  //.get("request_number");
+           }
+           requestMap.set(requestNum, entry);
+
+       }
+
+       let counter = 0;
+       let table = document.getElementById("gallery");
+       requestMap.forEach((value, key) => {
+
+           console.log('=======>>', key);
+           console.log(value, key);
+           let currNumber = value[0];
+           console.log(key, currNumber);
+           console.log("===>key",key, value[0]);
+
+           let mapAddressStart = new Map(Object.entries(value[1][1]));
+           let mapAddressDest = new Map(Object.entries(value[1][2]));
+           console.log(mapAddressStart.get("address"));
+           console.log(mapAddressDest.get("address"));
+
+           console.log(key, value[1][2]);
+           counter= counter+1;
+
+           let row = table.insertRow(-1);
+           let c1 = row.insertCell(0);
+           let c2 = row.insertCell(1);
+           let c3 = row.insertCell(2);
+           let c4 = row.insertCell(3);
+           //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
+           //var myImage.src="../images/default_luggage.jpg"
+           let c5 = row.insertCell(4);
+           let c6 = row.insertCell(5);
+
+
+           // Create an image element
+           const img = document.createElement("img");
+           img.src = "./images/defalaut_passanger.jpg";
+           img.alt = "defalaut passanger image";
+
+           const hostname = window.location.hostname;
+           console.log(hostname);
+
+           var fileNameLuggageString="/images/"+LUGGAGE_IMAGE+currNumber+IMAGE_EXTENTION;
+
+           console.log("===>"+fileNameLuggageString);
+
+           doesFileExist(fileNameLuggageString)
+           .then(exists => {
+               if (exists) {
+                   console.log("File exists!");
+                    img.src = fileNameLuggageString
+               } else {
+                   console.log("File does not exist!");
+               }
+           });
+
+           // Add the image to the cell
+           c6.appendChild(img);
+
+
+
+           // Create an image element
+           const img1 = document.createElement("img");
+           img1.src = "./images/default_luggage.jpg";
+           img1.alt = "defalaut luggage image";
+
+           var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
+
+           console.log(fileNamePersonString);
+
+           doesFileExist(fileNamePersonString)
+           .then(exists => {
+               if (exists) {
+                   console.log("File exists!");
+                    img1.src = fileNamePersonString
+               } else {
+                   console.log("File does not exist!");
+               }
+           });
+
+
+
+           // Add the image to the cell
+           c5.appendChild(img1);
+
+
+           // Add data to c1 and c2
+           c1.innerText = currNumber;
+           c2.innerText = mapAddressStart.get("address");
+           c3.innerText = mapAddressDest.get("address");
+           c4.innerText = mapAddressStart.get("starttime");
+           //c5.innerText = img;
+
+           var radioString = "input";
+           let checkbox = document.createElement(radioString);
+           checkbox.type = "checkbox";
+           c1.appendChild(checkbox);
+           row.insertBefore(c1, row.firstChild);
+
+       })
+
+
+     })
+     .catch(error => {
+       // Handle any errors during the fetch
+       console.error('Error:', error);
+     });
+
+}
+
+</script>
+</body>
+</html>
+

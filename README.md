@@ -30,7 +30,10 @@ Manager console
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/manager
 
 Example search box (find Point of Interest)
-http://ec2-44-202-55-203.compute-1.amazonaws.com:5000//offer/
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/offer/
+
+Example passenger selects driver
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/passenger_select_driver
 
 Example - distance between requests from http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_all
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_distance?startId=2&destId=1
@@ -101,15 +104,15 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/rideOffer
 2). Driver submits start/destination
 3). Driver sees passenger requests
 4). Driver  submits offer
+5). Passenger sees driver offer 
 ```
 #### IN PROGRESS
 ```
-5). Passenger sees driver offer 
+6). Passenger books
 ```
 
 #### TO DO
 ```
-6). Passenger books
 7). Driver confirms booking (chat opens)
 8). App notificatis/web page.
 ```

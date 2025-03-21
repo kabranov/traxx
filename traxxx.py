@@ -36,7 +36,14 @@ def manager():
 def passanger_choice():
     query = request.args.get('driverId')  # Get query parameter `q`
     print(f"Search query: {query}")  # Print in server logs
-    return render_template('index_passanger_choice.html',driverId=query)
+    return render_template('index_passanger_choice.html')
+
+@app.route('/passenger_select_driver')
+def passenger_select_driver():
+    #query = request.args.get('driverId')  # Get query parameter `q`
+    #print(f"Search query: {query}")  # Print in server logs
+    return render_template('passanger_select_driver.html')
+
 
 @app.route('/get_distance')
 def distance_between():
@@ -299,7 +306,8 @@ def save_coordinates():
         #return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"=  Bitte zeigen Sie diese Bestellnummer dem Fahrer am Abholort.  Ihre Abholzeut ist "+ selected_time + ".", 201
         #return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
 
-        return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
+        #return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
+        return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"."+'\n'+"Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
 
     except Exception as e:
         print(f"An error occurred: {e}") # Log the error for debugging
