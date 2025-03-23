@@ -235,14 +235,10 @@
 
                    var radioString = "input";
                    let checkbox = document.createElement(radioString);
-                   checkbox.type = "checkbox";
+                   checkbox.type = "radio";
                    c1.appendChild(checkbox);
                    row.insertBefore(c1, row.firstChild);
                     }
-
-
-
-
                }
 
            })
@@ -276,6 +272,7 @@ async function doesFileExist(urlToFile) {
        const selectedNumbers = [];
        let autofillCollection;
        let minimap;
+       var radioSelected = -1;
 
 
        // Add geocoder (autocomplete search box)
@@ -346,6 +343,8 @@ async function doesFileExist(urlToFile) {
            // there are some checked checkboxes
        }
 
+       // TO FIX !!! uncheck all boxes
+       //checkedBoxes.forEach(radio => radio.checked = false);
 
        // Iterate through each checked checkbox
        checkedBoxes.forEach(checkbox => {
@@ -363,12 +362,17 @@ async function doesFileExist(urlToFile) {
 
          // Extract the numeric value from the desired cell (e.g., second cell)
          const numericValue = parseInt(row.cells[0].textContent);
-
+         radioSelected = numericValue;
          // Add the numeric value to the array if it's a valid number
-         if (!isNaN(numericValue)) {
-           selectedNumbers.push(numericValue);
-         }
+         //if (!isNaN(numericValue)) {
+           //selectedNumbers.splice(0, selectedNumbers.length);
+           //selectedNumbers.push(numericValue);
+         //}
        });
+
+/*
+
+         // TO FIX - send the selected input to backend and save it
 
 
          const payload = {driver: driverId, passengers:selectedNumbers};
@@ -397,6 +401,7 @@ async function doesFileExist(urlToFile) {
            console.log("DATA:"+data);
            //document.getElementById("result").textContent = data;
          });
+ */
 
 
 
@@ -404,252 +409,10 @@ async function doesFileExist(urlToFile) {
 
        // Log the selected raw numbers
        console.log(selectedNumbers);
-       alert(selectedNumbers);
+       alert(radioSelected);
 
 
    });
-
-
-   const form = document.getElementById("destination");
-
-   form.addEventListener("submit", (event) => {
-       event.preventDefault(); // Prevent the default form submission
-
-       const formData = new FormData(form); // Create a FormData object
-
-
-       formData["start_address"]= document.querySelector(".input.mb11").value;;
-       formData["start_postal-code"]= document.querySelector(".input.input.mb14").value;
-       formData["start_city"]= document.querySelector(".input.mb12").value;
-       formData["start_state"]= document.querySelector(".input.mb13").value;
-       formData["selected_date_time"]=selectedDateTime;
-       console.log(formData["start_address"]);
-       console.log(formData["start_postal-code"]);
-       console.log(formData["start_city"]);
-       console.log(formData["start_state"]);
-       console.log(formData["selected_date_time"]);
-
-
-       formData["dest_address"]= document.querySelector(".input.mb21").value;;
-       formData["dest_postal-code"]= document.querySelector(".input.input.mb24").value;
-       formData["dest_city"]= document.querySelector(".input.mb22").value;
-       formData["dest_state"]= document.querySelector(".input.mb23").value;
-       console.log(formData["dest_address"]);
-       console.log(formData["dest_postal-code"]);
-       console.log(formData["dest_city"]);
-       console.log(formData["dest_state"]);
-
-
-         fetch("/saveCoordinatesDriver", {
-           method: "POST",
-           headers: {
-             'Content-Type': 'application/json'
-           },
-           body: JSON.stringify(formData)
-         })
-         .then(response => {
-           // Handle the response from the server
-           if (response.ok) {
-             console.log("Form submitted successfully");
-             const json = response.text();
-             console.log("JSON:"+json);
-             //document.getElementById("result").textContent = json;
-             return json;
-           } else {
-             console.error("Form submission failed");
-           }
-         }).then((data) => {
-           console.log("DATA:"+data);
-           document.getElementById("result").textContent = data;
-         });
-
-
-
-         //  location.href = "/manager";
-         //  location.replace("/manager");
-          // restartExample();
-
-       });
-
-
-
-
-       // Autofill initialization
-       window.addEventListener('load', function () {
-           mapboxsearch.config.accessToken = ACCESS_TOKEN;
-
-           // autofill() automatically binds address search to the address-line1 input
-            autofillCollection = mapboxsearch.autofill({
-                   options: { country: 'de' }
-               }
-           );
-
-           // initialize a minimap
-           minimap1 = new MapboxAddressMinimap();
-           //minimap1.canAdjustMarker = true;
-           minimap1.satelliteToggle = true;
-           minimap1.onSaveMarkerLocation = (lnglat) => {
-               console.log(`Marker moved to ${lnglat}`);
-           };
-
-           minimap2 = new MapboxAddressMinimap();
-           //minimap2.canAdjustMarker = true;
-           minimap2.satelliteToggle = true;
-           minimap2.onSaveMarkerLocation = (lnglat) => {
-               console.log(`Marker moved to ${lnglat}`);
-           };
-
-           // append the minimap to the page
-           const minimapContainer1 = document.getElementById("minimap-container1");
-           minimapContainer1.appendChild(minimap1);
-           const minimapContainer2 = document.getElementById("minimap-container2");
-           minimapContainer2.appendChild(minimap2);
-
-
-           // when the user selects a suggested address, show the minimap
-           autofillCollection.addEventListener(
-               "retrieve",
-               async (e) => {
-                    console.log( e)
-                       const currentTarget = e.currentTarget;
-                       console.log( e.target.id);
-                   if (e.target.id == "address1_input") {
-                       minimap1.feature = e.detail.features[0];
-                       showMap1();
-                       //const marker = new mapboxgl.Marker()
-                       //.setLngLat([-87.661557, 41.893748]) // Set marker coordinates
-                       //.addTo(map)
-                   }
-                   if (e.target.id == "address2_input") {
-                       minimap2.feature = e.detail.features[0];
-                       showMap2();
-                   }
-               }
-           );
-
-           load_gallery();
-       })
-
-
-function  load_gallery (){
-
-    fetch('/get_all')
-     .then(response => response.json())
-     .then(json_data => {
-
-       const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
-       for (entry of arr) {
-           for( part of entry){
-               var requestNum = part[0];  //.get("request_number");
-           }
-           requestMap.set(requestNum, entry);
-
-       }
-
-       let counter = 0;
-       let table = document.getElementById("gallery");
-       requestMap.forEach((value, key) => {
-
-           console.log('=======>>', key);
-           console.log(value, key);
-           let currNumber = value[0];
-           console.log(key, currNumber);
-           console.log("===>key",key, value[0]);
-
-           let mapAddressStart = new Map(Object.entries(value[1][1]));
-           let mapAddressDest = new Map(Object.entries(value[1][2]));
-           console.log(mapAddressStart.get("address"));
-           console.log(mapAddressDest.get("address"));
-
-           console.log(key, value[1][2]);
-           counter= counter+1;
-
-           let row = table.insertRow(-1);
-           let c1 = row.insertCell(0);
-           let c2 = row.insertCell(1);
-           let c3 = row.insertCell(2);
-           let c4 = row.insertCell(3);
-           //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
-           //var myImage.src="../images/default_luggage.jpg"
-           let c5 = row.insertCell(4);
-           let c6 = row.insertCell(5);
-
-
-           // Create an image element
-           const img = document.createElement("img");
-           img.src = "./images/defalaut_passanger.jpg";
-           img.alt = "defalaut passanger image";
-
-           const hostname = window.location.hostname;
-           console.log(hostname);
-
-           var fileNameLuggageString="/images/"+LUGGAGE_IMAGE+currNumber+IMAGE_EXTENTION;
-
-           console.log("===>"+fileNameLuggageString);
-
-           doesFileExist(fileNameLuggageString)
-           .then(exists => {
-               if (exists) {
-                   console.log("File exists!");
-                    img.src = fileNameLuggageString
-               } else {
-                   console.log("File does not exist!");
-               }
-           });
-
-           // Add the image to the cell
-           c6.appendChild(img);
-
-
-
-           // Create an image element
-           const img1 = document.createElement("img");
-           img1.src = "./images/default_luggage.jpg";
-           img1.alt = "defalaut luggage image";
-
-           var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
-
-           console.log(fileNamePersonString);
-
-           doesFileExist(fileNamePersonString)
-           .then(exists => {
-               if (exists) {
-                   console.log("File exists!");
-                    img1.src = fileNamePersonString
-               } else {
-                   console.log("File does not exist!");
-               }
-           });
-
-
-
-           // Add the image to the cell
-           c5.appendChild(img1);
-
-
-           // Add data to c1 and c2
-           c1.innerText = currNumber;
-           c2.innerText = mapAddressStart.get("address");
-           c3.innerText = mapAddressDest.get("address");
-           c4.innerText = mapAddressStart.get("starttime");
-           //c5.innerText = img;
-
-           var radioString = "input";
-           let checkbox = document.createElement(radioString);
-           checkbox.type = "checkbox";
-           c1.appendChild(checkbox);
-           row.insertBefore(c1, row.firstChild);
-
-       })
-
-
-     })
-     .catch(error => {
-       // Handle any errors during the fetch
-       console.error('Error:', error);
-     });
-
-}
 
 </script>
 </body>
