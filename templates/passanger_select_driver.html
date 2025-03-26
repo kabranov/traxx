@@ -101,7 +101,7 @@
         </div>
 </div>
 </div>
-
+<p id="result"></p>
 
 <script>
 
@@ -370,15 +370,18 @@ async function doesFileExist(urlToFile) {
          //}
        });
 
-/*
+
 
          // TO FIX - send the selected input to backend and save it
 
 
-         const payload = {driver: driverId, passengers:selectedNumbers};
+         const payload = {passenger: parseInt(passenger_id), selectedDriver:radioSelected};
          const payloadBody = JSON.stringify(payload);
          console.log("payloadBody:"+payloadBody);
-         fetch("/rideOffers", {
+
+
+
+         fetch("/save_passenger_and_driver", {
            method: "POST",
            headers: {
              'Content-Type': 'application/json'
@@ -392,16 +395,16 @@ async function doesFileExist(urlToFile) {
              const json = response.text();
              console.log("JSON:"+json);
              document.getElementById('submitPassengers').disabled = true;
-             //document.getElementById("result").textContent = json;
+             document.getElementById("result").textContent = json;
              return json;
            } else {
              console.error("Form submission failed");
            }
          }).then((data) => {
-           console.log("DATA:"+data);
+           console.log("DATA RECEIVED:"+data);
            //document.getElementById("result").textContent = data;
          });
- */
+
 
 
 

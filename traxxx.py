@@ -44,6 +44,26 @@ def passenger_select_driver():
     #print(f"Search query: {query}")  # Print in server logs
     return render_template('passanger_select_driver.html')
 
+@app.route('/save_passenger_and_driver', methods=['POST'])
+def save_passenger_and_driver():
+    data = request.get_json()
+
+    # Extract driver and passengers
+    passegner_id = data.get("passenger")
+    driver_id = data.get("selectedDriver")
+    print(passegner_id)
+    print(driver_id)
+    if not driver_id or not passegner_id:
+        return jsonify({"error": "Invalid input format"}), 400
+    #passegner_id = request.args.get('passenger')  # Get query parameter `q`
+    #driver_id = request.args.get('selectedDriver')  # Get query parameter `q`
+    print(f"passenger_id: {passegner_id}")  # Print in server logs
+    print(f"driver_id: {driver_id}")  # Print in server logs
+    coordinates.get(int(passegner_id))[0]["acceptedRideOfferFrom"] = driver_id
+    result = "your selection was recieved"
+    return jsonify(str(result))
+
+
 
 @app.route('/get_distance')
 def distance_between():
