@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+
+    <title>Fahrer</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        img {
+            max-width: 200px;
+            height: auto;
+            border: 0px solid #ccc;
+            border-radius: 5px;
+        }
+        .image-name {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+
+    <!-- Default styling. Feel free to remove! -->
+    <link href="https://api.mapbox.com/mapbox-assembly/v1.3.0/assembly.min.css" rel="stylesheet">
+    <script id="search-js" defer="" src="https://api.mapbox.com/search-js/v1.0.0-beta.24/web.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
+
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+
+
+<!-- =================================== -->
+<h1>Fahrer Angebot auswahlen</h1>
+
+
+<div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
+    <div class="wmax600 mx-auto">
+        <div class="address-page">
+            <img src="{{url_for('static', filename='Traxx_Logo.jpeg')}}" alt="Traxx_Logo" style="width:128px;height:128px;">
+            <h3 class="txt-l txt-bold mb6"><strong> TRAXX Fahrer Konsole</strong></h3>
+            <strong><bold></bold><p id="requestId"></p></bold></strong>
+
+            <form id="myForm">
+                <label for="driver_id"><strong><bold>Fahrer referenznummer:</bold></strong></label>
+                <input type="text" id="driver_id" name="driver_id" required>
+
+                <button type="submit" class="btn round submit-order-button"><strong><bold>Submit</bold></strong></button>
+            </form>
+
+            <p id="responseMessage"></p>
+        </div>
+    </div>
+</div>
+
+
+        <div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
+            <div class="wmax800 mx-auto">
+                <div class="address-page">
+                    <hr>
+                    <table id="gallery">
+                            <thead>
+                            <th> Mitfahrernummer </th>
+                            <th> Price/Zeit </th>
+                            <th> Addresse </th>
+                            <th> Photo</th>
+                            </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+<p id="result"></p>
+
+<script>
+
+   let driver_id = 0;
+   let requestMap = new Map();
+   var PASSENGER_IMAGE="passenger_image_";
+   var IMAGE_EXTENTION = ".jpeg";
+
+   document.getElementById("myForm").addEventListener("submit", function(event) {
+           event.preventDefault(); // Prevent default form submission
+
+           driver_id = document.getElementById("driver_id").value;
+           document.getElementById("responseMessage").innerText = ""+driver_id;
+
+
+       fetch('/get_all')
+         .then(response => response.json())
+         .then(json_data => {
+           requestMap = new Map();
+           const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
+           for (entry of arr) {
+               for( part of entry){
+                   var requestNum = part[0];  //.get("request_number");
+               }
+               requestMap.set(requestNum, entry);
+
+           }
+
+           let counter = 0;
+           let table = document.getElementById("gallery");
+            while (table.rows.length > 1) {  // Keeps the first row (assumed header)
+                table.deleteRow(1); // Always delete the second row since index shifts
+            }
+
+           requestMap.forEach((value, key) => {
+
+               console.log(value, key);
+               let currNumber = value[0];
+               console.log(key, currNumber);
+
+               let map1 = new Map(Object.entries(value[1][0]));
+
+
+               if('passenger'===map1.get("type")) {
+                 if(map1.get("acceptedRideOfferFrom")!=null && map1.get("acceptedRideOfferFrom")===parseInt(driver_id)){
+                   let mapAddressStart = new Map(Object.entries(value[1][1]));
+                   let mapAddressDest = new Map(Object.entries(value[1][2]));
+                   console.log(mapAddressStart.get("address"));
+                   console.log(mapAddressDest.get("address"));
+
+                   let mapDistancePrice = new Map(Object.entries(value[1][3]));
+                   //console.log('=======>>', mapDistancePrice.get("distance"));
+
+                   console.log(key, value[1][2]);
+                   counter= counter+1;
+
+                   var row = table.insertRow(-1);
+                   var c1 = row.insertCell(0);
+                   var c2 = row.insertCell(1);
+                   var c3 = row.insertCell(2);
+                   var c4 = row.insertCell(3);
+
+                   var c5 = row.insertCell(4);
+                   var c6 = row.insertCell(5);
+
+                   c1. innerText = map1.get("request_number");
+                   c2.innerText = mapAddressStart.get("starttime");
+                   c3.innerText = mapAddressStart;
+                   // Create an image element
+                   const img = document.createElement("img");
+                   img.src = "./images/default_luggage.jpg";
+                   img.alt = "defalaut passanger image";
+                   img.width = 150;
+
+                   const hostname = window.location.hostname;
+                   console.log(hostname);
+
+
+                   // Add the image to the cell
+                   c4.appendChild(img);
+
+
+                   var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
+
+                   console.log(fileNamePersonString);
+
+                   doesFileExist(fileNamePersonString)
+                   .then(exists => {
+                       if (exists) {
+                           console.log("File exists!");
+                            img1.src = fileNamePersonString
+                       } else {
+                           console.log("File does not exist!");
+                       }
+                   });
+                 }
+               }
+           })
+
+     })
+     .catch(error => {
+       // Handle any errors during the fetch
+       console.error('Error:', error);
+     });
+  });
+
+
+
+async function doesFileExist(urlToFile) {
+ try {
+   const response = await fetch(urlToFile, { method: 'GET' });
+   return response.ok; // Returns true if status is 200-299
+ } catch (error) {
+   return false;
+ }
+}
+
+
+
+
+
+
+   const ACCESS_TOKEN = 'pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA';
+
+       const selectedNumbers = [];
+       let autofillCollection;
+       let minimap;
+       var radioSelected = -1;
+
+
+       // Add geocoder (autocomplete search box)
+       const geocoder = new MapboxGeocoder({
+           accessToken: mapboxgl.accessToken,
+           mapboxgl: mapboxgl,
+           placeholder: 'Search for places...',
+           types: 'poi', // Focus on Points of Interest
+           countries: 'us', // Restrict to specific country (optional)
+           bbox: [-180, -85, 180, 85], // Optional bounding box filter
+           proximity: { longitude: -74.006, latitude: 40.7128 } // Search near NYC initially
+       });
+
+
+
+       // show the minimap
+       function showMap1() {
+           const el = document.getElementById("minimap-container1");
+           el.classList.remove("none");
+       }
+
+       function showMap2() {
+           const el = document.getElementById("minimap-container2");
+           el.classList.remove("none");
+       }
+
+
+
+       function restartExample() {
+           window.location.reload();
+       }
+
+
+  let selectedDateTime = null;
+
+   // Initialize Flatpickr with German localization
+   flatpickr("#datetime", {
+       enableTime: true,
+       dateFormat: "d.m.Y H:i", // German date format
+       locale: "de" // Set locale to German
+   });
+
+   flatpickr("#datetime-picker", {
+     enableTime: true,
+     dateFormat: "d.m.Y H:i",
+     time_24hr: true,
+     locale: "de",
+     onChange: function(selectedDates, dateStr, instance) {
+       // Save the selected date and time in a variable
+       selectedDateTime = dateStr;
+       console.log("Selected Date and Time:", selectedDateTime);
+     }
+   });
+
+
+   const form2= document.getElementById("passengersList");
+   //const nameInput = document.getElementById('submitPassengers');
+
+   form2.addEventListener("submit", (event) => {
+       event.preventDefault(); // Prevent the default form submission
+
+       var checkedBoxes = document.querySelectorAll('input:checked');
+
+       if (checkedBoxes.length === 0) {
+           // there are no checked checkboxes
+       alert('no checkboxes checked');
+       } else {
+           // there are some checked checkboxes
+       }
+
+       // TO FIX !!! uncheck all boxes
+       //checkedBoxes.forEach(radio => radio.checked = false);
+
+       // Iterate through each checked checkbox
+       checkedBoxes.forEach(checkbox => {
+         // Get the parent row of the checkbox
+         const row = checkbox.closest('tr');
+
+       if (row) {
+           // The 'row' variable now holds the closest parent <tr> element
+           //alert("row="+row.cells[0].textContent);
+       } else {
+           // No parent <tr> element found
+           alert('No selection done');
+       }
+
+
+         // Extract the numeric value from the desired cell (e.g., second cell)
+         const numericValue = parseInt(row.cells[0].textContent);
+         radioSelected = numericValue;
+         // Add the numeric value to the array if it's a valid number
+         //if (!isNaN(numericValue)) {
+           //selectedNumbers.splice(0, selectedNumbers.length);
+           //selectedNumbers.push(numericValue);
+         //}
+       });
+
+
+
+         // TO FIX - send the selected input to backend and save it
+
+
+         const payload = {passenger: parseInt(passenger_id), selectedDriver:radioSelected};
+         const payloadBody = JSON.stringify(payload);
+         console.log("payloadBody:"+payloadBody);
+
+
+
+         fetch("/save_passenger_and_driver", {
+           method: "POST",
+           headers: {
+             'Content-Type': 'application/json'
+           },
+           body: payloadBody
+         })
+         .then(response => {
+           // Handle the response from the server
+           if (response.ok) {
+             console.log("Form submitted successfully");
+             const json = response.text();
+             console.log("JSON:"+json);
+             document.getElementById('submitPassengers').disabled = true;
+             document.getElementById("result").textContent = json;
+             return json;
+           } else {
+             console.error("Form submission failed");
+           }
+         }).then((data) => {
+           console.log("DATA RECEIVED:"+data);
+           //document.getElementById("result").textContent = data;
+         });
+
+
+
+
+
+
+       // Log the selected raw numbers
+       console.log(selectedNumbers);
+       alert(radioSelected);
+
+
+   });
+
+</script>
+</body>
+</html>
+

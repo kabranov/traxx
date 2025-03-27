@@ -492,6 +492,9 @@ def save_coordinates_driver():
         return jsonify({"error": "An internal server error occurred"}), 500
 
 
+@app.route('/driver_notify')
+def driver_notify():
+    return render_template('driver_notify.html')
 
 
 def get_coordinates( address:str)-> [str, str]:
