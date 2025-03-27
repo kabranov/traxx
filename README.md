@@ -38,6 +38,9 @@ http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/passenger_select_driver
 Example - distance between requests from http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_all
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_distance?startId=2&destId=1
 
+Driver confirms booking:
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/driver_notify
+
 ```
 Application in Google store
 https://play.google.com/apps/internaltest/4701729781484107278
@@ -105,15 +108,17 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/rideOffer
 3). Driver sees passenger requests
 4). Driver  submits offer
 5). Passenger sees driver offer 
+6). Passenger books
+7). Driver confirms booking (NO CHAT at the moment)
+
 ```
 #### IN PROGRESS
 ```
-6). Passenger books
+8). App notificatis/web page.  - Page works, fixing bugs
 ```
 
 #### TO DO
 ```
-7). Driver confirms booking (chat opens)
 8). App notificatis/web page.
 ```
 
