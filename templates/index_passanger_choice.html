@@ -207,6 +207,37 @@
                     }
                 });
 
+                let ABDistance = 0;
+                let CDDistance = 0;
+
+                getABDistance = "/get_distance?startId="+driverId+"&destId="+driverId;
+                console.log("getABDistance="+getABDistance);
+                fetch(getABDistance).then(response => response.json()).then(json_data =>
+                {
+                    jsonStr = json_data.replace(/'/g, '"');
+                    obj = JSON.parse(jsonStr);
+                    mapdetour = new Map(Object.entries(obj));
+                    ABDistance = mapdetour.get("distance");
+                    console.log("mapdetour 1==>"+ABDistance);
+                }).catch(error => {
+                    // Handle any errors during the fetch
+                     console.error('Error:', error);
+                });
+
+                getCDDistance = "/get_distance?startId="+currNumber+"&destId="+currNumber;
+                console.log("getCDDistance="+getCDDistance);
+                fetch(getCDDistance).then(response => response.json()).then(json_data =>
+                {
+                    jsonStr = json_data.replace(/'/g, '"');
+                    obj = JSON.parse(jsonStr);
+                    mapdetour = new Map(Object.entries(obj));
+                    CDDistance = mapdetour.get("distance");
+                    console.log("mapdetour 1==>"+CDDistance);
+                }).catch(error => {
+                    // Handle any errors during the fetch
+                     console.error('Error:', error);
+                });
+
 
 
                 // Add the image to the cell
@@ -227,9 +258,12 @@
                 c1.innerText = currNumber;
                 c2.innerText = mapAddressStart.get("address");
                 c3.innerText = mapAddressDest.get("address");
-                c4.innerText = mapAddressStart.get("starttime")+"\n"+mapDistancePrice.get("distance")+" km\n"
+                c4.innerText = mapAddressStart.get("starttime")
+                                    //+"\n"+mapDistancePrice.get("distance")+" km\n"
                                     //+ mapDistancePrice.get("price")+" Euro"
-                                    + "Umweg "+detour_km+" km";
+                                    + "\n"+"Umweg "+detour_km+" km\n"
+                                    + "ABDistance "+ABDistance +" km\n"
+                                    + "CDDistance "+CDDistance +" km\n";
 
                 var radioString = "input";
                 let checkbox = document.createElement(radioString);

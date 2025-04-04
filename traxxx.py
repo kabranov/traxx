@@ -385,6 +385,7 @@ def save_coordinates_driver():
         lat_dest, long_dest =  coords_dest
 
 
+        #Replace haversine
         distance = haversine(lat_start, long_start, lat_dest, long_dest)
         string_disctance = "{:.1f}".format(float(distance))
         print("distance:"+string_disctance)
@@ -436,7 +437,7 @@ def save_coordinates_driver():
             "state":dest_state
         }
         route_data = {
-            "distance" : string_disctance,
+            "distance" : map_distance_str,
             "price":0
         }
 
@@ -538,6 +539,13 @@ def get_distance_request(id1,id2):
         # passenger_end
         # driver_end
         # detour = distance(driver_start,passenger_start)+distance(passenger_end,driver_end)
+        print("ID1=",id1)
+        print("ID2=",id2)
+        if id1==id2:
+            print("EQUAL=",id1)
+            route_detour["distance"]=coordinates[int(id1)][3].get("distance")
+            return route_detour
+
 
         #coordinates
         driver_start_long = coordinates[int(id1)][1].get("long")
