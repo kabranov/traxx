@@ -109,6 +109,23 @@
     console.log("===>driverId="+driverId);
     document.getElementById("requestId").textContent = "Ihr Angebotreferenznummer ist "+driverId;
 
+    var ABDistance = 0;
+
+    getABDistance = "/get_distance?startId="+driverId+"&destId="+driverId;
+    console.log("getABDistance="+getABDistance);
+    fetch(getABDistance).then(response => response.json()).then(json_data =>
+    {
+        jsonStr = json_data.replace(/'/g, '"');
+        obj = JSON.parse(jsonStr);
+        mapdetour = new Map(Object.entries(obj));
+        ABDistance = mapdetour.get("distance");
+        console.log("mapdetour 1==>"+ABDistance);
+    }).catch(error => {
+        // Handle any errors during the fetch
+         console.error('Error:', error);
+    });
+
+
     fetch('/get_all')
       .then(response => response.json())
       .then(json_data => {
@@ -207,22 +224,9 @@
                     }
                 });
 
-                let ABDistance = 0;
+                //let ABDistance = 0;
                 let CDDistance = 0;
 
-                getABDistance = "/get_distance?startId="+driverId+"&destId="+driverId;
-                console.log("getABDistance="+getABDistance);
-                fetch(getABDistance).then(response => response.json()).then(json_data =>
-                {
-                    jsonStr = json_data.replace(/'/g, '"');
-                    obj = JSON.parse(jsonStr);
-                    mapdetour = new Map(Object.entries(obj));
-                    ABDistance = mapdetour.get("distance");
-                    console.log("mapdetour 1==>"+ABDistance);
-                }).catch(error => {
-                    // Handle any errors during the fetch
-                     console.error('Error:', error);
-                });
 
                 getCDDistance = "/get_distance?startId="+currNumber+"&destId="+currNumber;
                 console.log("getCDDistance="+getCDDistance);
@@ -237,7 +241,6 @@
                     // Handle any errors during the fetch
                      console.error('Error:', error);
                 });
-
 
 
                 // Add the image to the cell
@@ -317,68 +320,7 @@ async function doesFileExist(urlToFile) {
 }
 
 
-
-
-
-
-    const ACCESS_TOKEN = 'pk.eyJ1Ijoib2thYnJhbm92IiwiYSI6ImNtNW5oc2FwazBiNWUybHE1ZGE0Z2hvMG8ifQ.waPPu_t4BN-s2cF6UObqcA';
-
-        const selectedNumbers = [];
-        let autofillCollection;
-        let minimap;
-
-
-        // Add geocoder (autocomplete search box)
-        const geocoder = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            mapboxgl: mapboxgl,
-            placeholder: 'Search for places...',
-            types: 'poi', // Focus on Points of Interest
-            countries: 'us', // Restrict to specific country (optional)
-            bbox: [-180, -85, 180, 85], // Optional bounding box filter
-            proximity: { longitude: -74.006, latitude: 40.7128 } // Search near NYC initially
-        });
-
-
-
-        // show the minimap
-        function showMap1() {
-            const el = document.getElementById("minimap-container1");
-            el.classList.remove("none");
-        }
-
-        function showMap2() {
-            const el = document.getElementById("minimap-container2");
-            el.classList.remove("none");
-        }
-
-
-
-        function restartExample() {
-            window.location.reload();
-        }
-
-
-   let selectedDateTime = null;
-
-    // Initialize Flatpickr with German localization
-    flatpickr("#datetime", {
-        enableTime: true,
-        dateFormat: "d.m.Y H:i", // German date format
-        locale: "de" // Set locale to German
-    });
-
-    flatpickr("#datetime-picker", {
-      enableTime: true,
-      dateFormat: "d.m.Y H:i",
-      time_24hr: true,
-      locale: "de",
-      onChange: function(selectedDates, dateStr, instance) {
-        // Save the selected date and time in a variable
-        selectedDateTime = dateStr;
-        console.log("Selected Date and Time:", selectedDateTime);
-      }
-    });
+    const selectedNumbers = [];
 
 
     const form2= document.getElementById("passengersList");
@@ -447,9 +389,6 @@ async function doesFileExist(urlToFile) {
             console.log("DATA:"+data);
             //document.getElementById("result").textContent = data;
           });
-
-
-
 
 
         // Log the selected raw numbers
@@ -522,63 +461,6 @@ async function doesFileExist(urlToFile) {
         });
 
 
-
-
-        // Autofill initialization
-        window.addEventListener('load', function () {
-            mapboxsearch.config.accessToken = ACCESS_TOKEN;
-
-            // autofill() automatically binds address search to the address-line1 input
-             autofillCollection = mapboxsearch.autofill({
-                    options: { country: 'de' }
-                }
-            );
-
-            // initialize a minimap
-            minimap1 = new MapboxAddressMinimap();
-            //minimap1.canAdjustMarker = true;
-            minimap1.satelliteToggle = true;
-            minimap1.onSaveMarkerLocation = (lnglat) => {
-                console.log(`Marker moved to ${lnglat}`);
-            };
-
-            minimap2 = new MapboxAddressMinimap();
-            //minimap2.canAdjustMarker = true;
-            minimap2.satelliteToggle = true;
-            minimap2.onSaveMarkerLocation = (lnglat) => {
-                console.log(`Marker moved to ${lnglat}`);
-            };
-
-            // append the minimap to the page
-            const minimapContainer1 = document.getElementById("minimap-container1");
-            minimapContainer1.appendChild(minimap1);
-            const minimapContainer2 = document.getElementById("minimap-container2");
-            minimapContainer2.appendChild(minimap2);
-
-
-            // when the user selects a suggested address, show the minimap
-            autofillCollection.addEventListener(
-                "retrieve",
-                async (e) => {
-                     console.log( e)
-                        const currentTarget = e.currentTarget;
-                        console.log( e.target.id);
-                    if (e.target.id == "address1_input") {
-                        minimap1.feature = e.detail.features[0];
-                        showMap1();
-                        //const marker = new mapboxgl.Marker()
-                        //.setLngLat([-87.661557, 41.893748]) // Set marker coordinates
-                        //.addTo(map)
-                    }
-                    if (e.target.id == "address2_input") {
-                        minimap2.feature = e.detail.features[0];
-                        showMap2();
-                    }
-                }
-            );
-
-            load_gallery();
-        })
 
 
 function  load_gallery (){
