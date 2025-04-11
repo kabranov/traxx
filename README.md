@@ -16,17 +16,47 @@ flask --app traxxx.py run --debug
 ```
 ### 2).Links to the prototype web app
 
+#### 2.1). Steps end to end
 ```
-passenger console - submit a request
+
+1). Passenger(s) submits a ride request
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/
+
+ please note the passsenger request Id
+
+2). Driver(s) offers ride (NEW). Detour and distances available
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/driver_offer
+
+please note the driver request Id
+
+3). Passenger selects a driver offer from all offers
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/passenger_select_driver
+
+please use the request Id from step 1
+
+4). Driver sees passenger confirmation
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/driver_notify
+
+please use the request Id from step 2
+
+```
+
+### 3). All available APIs
+
+```
+passenger console - passenger submits a request
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/
 
 all passenger requests
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_all
 
-Driver offer Passangers and luggage (not finished)
+Driver offer Passangers and luggage (DEPRICATED)
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/driver
 
-Manager console
+Driver offers ride (NEW)
+http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/driver_offer
+
+Manager console (observe requests)
 http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/manager
 
 Example search box (find Point of Interest)
@@ -49,7 +79,7 @@ https://play.google.com/apps/internaltest/4701729781484107278
 ```
 
 
-### 3). Restart in AWS
+### 4). Restart in AWS
 ```
 ubuntu    101783       1  0 Jan22 ?        00:00:10 python3 traxxx.py
 ubuntu    105337  105327  0 06:31 pts/0    00:00:00 grep --color=auto traxx
@@ -62,7 +92,7 @@ ubuntu@ip-172-31-95-98:~$ source venv/bin/activate
 (venv) ubuntu@ip-172-31-95-98:~$ pip3 install geocoder
 ```
 
-### 4). Curl command to add new request to the traxx server:
+### 5). Curl command to add new request to the traxx server:
 
 ```
 curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/saveCoordinates' \
@@ -82,7 +112,7 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/saveCoord
 
 }'
 ```
-### 5). Curl command for ride offers
+### 6). Curl command for ride offers
 
 Driver with ID 3 want to add passengers 2 and 1 to the database.
 
@@ -98,8 +128,92 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/rideOffer
 }'
 ```
 
+### 7). Curl command to get the matching riders for a driver offer
 
-### 6). Project progress
+Driver with ID 3 sees a list of passengers matching his offer.
+
+```
+curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/get_matches?driverId=3'
+```
+example response
+
+```
+{
+    "1": [
+        {
+            "acceptedRideOfferFrom": 3,
+            "offersFrom": [
+                "3",
+                "4"
+            ],
+            "request_number": 1,
+            "type": "passenger"
+        },
+        {
+            "address": "Uhlandstraße 13 Selbitz  95152",
+            "city": "Selbitz",
+            "lat": 50.319763,
+            "long": 11.754905,
+            "postal-code": "95152",
+            "starttime": "11.04.2025 12:00",
+            "state": ""
+        },
+        {
+            "address": "Kronacher Straße 7 Naila  95119",
+            "city": "Naila",
+            "lat": 50.328577,
+            "long": 11.709326,
+            "postal-code": "95119",
+            "state": ""
+        },
+        {
+            "detour": "1.0",
+            "distance": "4.8",
+            "offerFromDriver": "3",
+            "price": 0
+        }
+    ],
+    "2": [
+        {
+            "acceptedRideOfferFrom": 4,
+            "offersFrom": [
+                "3",
+                "4"
+            ],
+            "request_number": 2,
+            "type": "passenger"
+        },
+        {
+            "address": "Am Galgenberg 30 Selbitz  95152",
+            "city": "Selbitz",
+            "lat": 50.321399,
+            "long": 11.755483,
+            "postal-code": "95152",
+            "starttime": "11.04.2025 12:00",
+            "state": ""
+        },
+        {
+            "address": "Weststraße 8 Naila  95119",
+            "city": "Naila",
+            "lat": 50.329731,
+            "long": 11.706246,
+            "postal-code": "95119",
+            "state": ""
+        },
+        {
+            "detour": "1.3",
+            "distance": "5.6",
+            "offerFromDriver": "3",
+            "price": 0
+        }
+    ]
+}
+```
+
+
+
+
+### 8). Project progress
 
 #### DONE     
 ```

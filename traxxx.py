@@ -14,6 +14,7 @@ IMAGE_DIR = os.getcwd()
 start_coordinates=[]
 dest_coordinates=[]
 coordinates={}
+
 num_requests={}
 route_detour={}
 num_requests = {"num_requests":0}
@@ -28,6 +29,10 @@ def hello():
 def driver():
     return render_template('index.html')
 
+@app.route('/driver_offer')
+def driver_offer():
+    return render_template('index_driver_offer.html')
+
 @app.route('/manager')
 def manager():
     return render_template('index_manager.html')
@@ -37,6 +42,14 @@ def passanger_choice():
     query = request.args.get('driverId')  # Get query parameter `q`
     print(f"Search query: {query}")  # Print in server logs
     return render_template('index_passanger_choice.html')
+
+@app.route('/driver_sends_offer')
+def driver_sends_driver():
+    query = request.args.get('driverId')  # Get query parameter `q`
+    print(f"Search query: {query}")  # Print in server logs
+    return render_template('index_driver_sends_offer.html')
+
+
 
 @app.route('/passenger_select_driver')
 def passenger_select_driver():
@@ -116,6 +129,13 @@ def get_data():
 def get_all():
     print(coordinates)
     return jsonify(coordinates)
+
+@app.route('/get_matches', methods=['GET'])
+def get_matches():
+    query = request.args.get('driverId')  # Get query parameter `q`
+    print(f"Search query: {query}")  # Print in server logs
+    result = find_matches(query)
+    return result
 
 @app.route('/images')
 def list_images():
@@ -606,6 +626,8 @@ def get_distance_request(id1,id2):
         map_route_str = "{:.1f}".format(float(map_route_float))
 
         route_detour["route"]=map_route_str
+        route_detour["id1"]=id1
+        route_detour["id2"]=id2
         return route_detour
 
 
@@ -622,6 +644,26 @@ def  call_map_box(data):
 
 
         return response
+
+def find_matches(driverId):
+
+    coordinates_matched={}
+    print("driverId=",driverId)
+    driverEntry=coordinates[int(driverId)]
+
+    for entry in coordinates:
+        #print(coordinates[int(entry)])
+        print("====>",coordinates[int(entry)][0].get("request_number"))
+        entry_Id = coordinates[int(entry)][0].get("request_number")
+        print("===>",entry_Id)
+        distance = get_distance_request(int(driverId),int(entry_Id))
+        print("===> distance",distance)
+        if coordinates[int(entry)][0].get("type") != "driver":
+            coordinates_matched[int(entry)]=coordinates[int(entry)]
+            coordinates_matched[int(entry)][3]["offerFromDriver"]=driverId
+            coordinates_matched[int(entry)][3]["detour"]=distance.get("detour")
+
+    return jsonify(coordinates_matched)
 
 
 

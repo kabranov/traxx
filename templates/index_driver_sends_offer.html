@@ -61,38 +61,38 @@
     </div>
 </div>
 
-        <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
-            <div class="wmax600 mx-auto">
-                <div class="address-page">
-                    <form class="flex flex--column" name="passengersList" id="passengersList">
-                    <!--h3 class="txt-l txt-bold mb6"><strong> Passende Passagiere</strong></h3-->
+<div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
+    <div class="wmax600 mx-auto">
+        <div class="address-page">
+            <form class="flex flex--column" name="passengersList" id="passengersList">
+                <!--h3 class="txt-l txt-bold mb6"><strong> Passende Passagiere</strong></h3-->
 
-                            <button type="submit" class="btn round submit-order-button" id="submitPassengers" name="submitPassengers">
-                                Angebote machen
-                            </button>
-                    </form>
-                </div>
-            </div>
+                <button type="submit" class="btn round submit-order-button" id="submitPassengers" name="submitPassengers">
+                    Angebote machen
+                </button>
+            </form>
         </div>
+    </div>
+</div>
 
 
-        <div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
-            <div class="wmax800 mx-auto">
-                <div class="address-page">
-                    <hr>
-                    <table id="gallery">
-                            <thead>
-                            <th> Passagier Nummer </th>
-                            <th> Startpunkt </th>
-                            <th> Ziel </th>
-                            <th> Startzeit </th>
-                            <th> Mitfahrer </th>
-                            <th> Gepäck </th>
-                            </thead>
-                    </table>
-                </div>
-            </div>
+<div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
+    <div class="wmax800 mx-auto">
+        <div class="address-page">
+            <hr>
+            <table id="gallery">
+                <thead>
+                <th> Passagier Nummer </th>
+                <th> Startpunkt </th>
+                <th> Ziel </th>
+                <th> Startzeit </th>
+                <th> Mitfahrer </th>
+                <th> Gepäck </th>
+                </thead>
+            </table>
         </div>
+    </div>
+</div>
 </div>
 </div>
 
@@ -197,7 +197,11 @@
 
 
 
-    fetch('/get_all')
+
+
+
+
+    fetch('/get_matches?driverId='+driverId)
       .then(response => response.json())
       .then(json_data => {
 
@@ -218,12 +222,12 @@
             let currNumber = value[0];
             console.log(key, currNumber);
 
-            let map1 = new Map(Object.entries(value[1][0]));
+            let map1 = new Map(Object.entries(value[1][3]));
 
-            console.log("TYPE ===>", map1.get("type"));
+            console.log("TYPE offerFromDriver===>", map1.get("offerFromDriver"));
 
 
-            if('passenger'===map1.get("type")){
+            if(driverId===map1.get("offerFromDriver")){
 
                 let mapAddressStart = new Map(Object.entries(value[1][1]));
                 let mapAddressDest = new Map(Object.entries(value[1][2]));
@@ -311,7 +315,7 @@
                     //detour_km = await fetchDistance(getDistance); // wait here like it's "synchronous"
                     console.log('DETOUR 3:', detour_km);
                     c4.innerText = mapAddressStart.get("starttime")
-                    + "\n"+"Umweg "+(await fetchDistance(getDistance,"detour"))+" km\n"
+                    + "\n"+"Umweg "+map1.get("offerFromDriver")+" km\n"
                     + "ABDistance "+ABDistance +" km\n"
                     + "CDDistance "+CDDistance +" km\n";
                 })();
@@ -319,19 +323,19 @@
 
                 let CDDistance=value[1][3].distance;
 
-                var detour_km=0;
-                var id1=0
-                var id2=0
-                getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
-                console.log("DETUOR_URL="+getDistance);
-                fetch(getDistance).then(response => response.json()).then(json_data =>
-                {
-                    jsonStr = json_data.replace(/'/g, '"');
-                    obj = JSON.parse(jsonStr);
-                    mapdetour = new Map(Object.entries(obj));
-                    detour_km = mapdetour.get("detour");
-                    id1 = mapdetour.get("id1");
-                    id2 = mapdetour.get("id2");
+                var detour_km=map1.get("detour");
+                //var id1=0
+                //var id2=0
+                //getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
+                //console.log("DETUOR_URL="+getDistance);
+                //fetch(getDistance).then(response => response.json()).then(json_data =>
+                //{
+                    //jsonStr = json_data.replace(/'/g, '"');
+                    //obj = JSON.parse(jsonStr);
+                    //mapdetour = new Map(Object.entries(obj));
+                    //detour_km = mapdetour.get("detour");
+                    //id1 = mapdetour.get("id1");
+                    //id2 = mapdetour.get("id2");
                     console.log("mapdetour 1==>"+detour_km);
                     text = mapAddressStart.get("starttime")
                     + "\n"+"Umweg "+detour_km+" km\n"
@@ -341,10 +345,10 @@
 
                     c4.innerText = text;
 
-                }).catch(error => {
+                //}).catch(error => {
                     // Handle any errors during the fetch
-                     console.error('Error:', error);
-                });
+                //     console.error('Error:', error);
+                //});
 
                 /*
                 c4.innerText = mapAddressStart.get("starttime")
@@ -397,6 +401,7 @@
         // Handle any errors during the fetch
         console.error('Error:', error);
       });
+
 
 
 
@@ -676,4 +681,3 @@ function  load_gallery (){
 </script>
 </body>
 </html>
-
