@@ -347,7 +347,16 @@ def save_coordinates():
         #return "Die Entfernung zwischen Start- und Zielort beträgt " + string_disctance+ " km",201
 
         #return "Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
-        return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"."+'\n'+"Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
+        #return "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"."+'\n'+"Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km",201
+
+        message = "Ihre Bestellnummer ist ="+str(num_requests["num_requests"])+"."+'\n'+"Die Entfernung zwischen Start- und Zielort beträgt " + map_distance_str+ " km"
+        result_json = {}
+        result_json["message"] = message
+        result_json["refId"] = str(num_requests["num_requests"])
+        result_json["distance"] = map_distance_str
+
+        return result_json
+
 
     except Exception as e:
         print(f"An error occurred: {e}") # Log the error for debugging

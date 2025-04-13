@@ -112,6 +112,16 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/saveCoord
 
 }'
 ```
+
+response:
+```
+{
+    "distance": "646.7",
+    "message": "Ihre Bestellnummer ist =4.\nDie Entfernung zwischen Start- und Zielort beträgt 646.7 km",
+    "refId": "4"
+}
+```
+
 ### 6). Curl command for ride offers
 
 Driver with ID 3 want to add passengers 2 and 1 to the database.
