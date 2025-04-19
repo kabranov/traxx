@@ -368,7 +368,7 @@ async function doesFileExist(urlToFile) {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false
-    });
+    }).replace(",", "");
 
     // Initialize Flatpickr with German localization
     flatpickr("#datetime", {

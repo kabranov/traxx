@@ -133,7 +133,7 @@
 
                 <div class="mb12 submit-btns align-r">
                     <button type="submit" class="btn round submit-order-button" id="coordSubmit" name="coordSubmit">
-                        Startort und Zielort speichern
+                        Angebote Suchen
                     </button>
                 </div>
 
@@ -368,7 +368,7 @@ async function doesFileExist(urlToFile) {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false
-        });
+        }).replace(",", "");
 
     // Initialize Flatpickr with German localization
     flatpickr("#datetime", {

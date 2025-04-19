@@ -322,6 +322,7 @@
                 var detour_km=0;
                 var id1=0
                 var id2=0
+                var ACDBDistance=0;
                 getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
                 console.log("DETUOR_URL="+getDistance);
                 fetch(getDistance).then(response => response.json()).then(json_data =>
@@ -330,12 +331,15 @@
                     obj = JSON.parse(jsonStr);
                     mapdetour = new Map(Object.entries(obj));
                     detour_km = mapdetour.get("detour");
+                    ABDistance = mapdetour.get("route");
+                    ACDBDistance = mapdetour.get("distance");
                     id1 = mapdetour.get("id1");
                     id2 = mapdetour.get("id2");
                     console.log("mapdetour 1==>"+detour_km);
                     text = mapAddressStart.get("starttime")
                     + "\n"+"Umweg "+detour_km+" km\n"
                     + "ABDistance "+ABDistance +" km\n"
+                    + "ACDBDistance "+ACDBDistance +" km\n"
                     + "CDDistance "+CDDistance +" km\n";
                     console.log("text="+text);
 

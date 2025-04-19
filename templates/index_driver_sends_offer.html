@@ -163,7 +163,42 @@
     console.log("===>driverId="+driverId);
     document.getElementById("requestId").textContent = "Ihr Angebotreferenznummer ist "+driverId;
 
+    getEntry = "/get?id="+driverId;
+    console.log("getEntry="+getEntry);
+    async function fetchEntry() {
+        try {
+            const response = await fetch(getEntry);
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json_data = await response.json();
+            // Process the data here
+
+            const startAddress = json_data[1]['address']
+            const endAddress = json_data[2]['address']
+
+             document.getElementById("requestId").innerHTML = "Ihr Angebotreferenznummer ist "+driverId+
+                                                                "<br><br>"+
+                                                                "<br>Startadresse:"+startAddress +
+                                                                "<br>Zieladresse:"+endAddress;
+
+            console.log(json_data);
+        } catch (error) {
+            // Handle errors
+            console.error('Fetch error:', error);
+        }
+    }
+
+    fetchEntry(); // Call the async function
+
+
+
+
+
+
+
     var ABDistance = 0;
+    var ACDBDistance = 0;
     getABDistance = "/get_distance?startId="+driverId+"&destId="+driverId;
     console.log("getABDistance="+getABDistance);
     async function fetchABDistance() {
@@ -178,6 +213,7 @@
             obj = JSON.parse(jsonStr);
             mapdetour = new Map(Object.entries(obj));
             ABDistance = mapdetour.get("distance");
+            ACDBDistance = mapdetour.get("route");
             console.log("mapdetour 1==>"+ABDistance);
             console.log(jsonStr);
         } catch (error) {
@@ -188,42 +224,6 @@
 
     fetchABDistance(); // Call the async function
 
-
-
-/*
-               getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
-                console.log("DETUOR_URL="+getDistance);
-                fetch(getDistance).then(response => response.json()).then(json_data =>
-                {
-                    jsonStr = json_data.replace(/'/g, '"');
-                    obj = JSON.parse(jsonStr);
-                    mapdetour = new Map(Object.entries(obj));
-                    detour_km = mapdetour.get("detour");
-                    console.log("mapdetour 1==>"+detour_km);
-
-                     console.log("mapdetour 2==>"+detour_km);
-                    // Add data to c1 and c2
-                    c1.innerText = currNumber;
-                    c2.innerText = mapAddressStart.get("address");
-                    c3.innerText = mapAddressDest.get("address");
-                    c4.innerText = mapAddressStart.get("starttime")
-                                        //+"\n"+mapDistancePrice.get("distance")+" km\n"
-                                        //+ mapDistancePrice.get("price")+" Euro"
-                                        + "\n"+"Umweg "+detour_km+" km\n"
-                                        + "ABDistance "+ABDistance +" km\n"
-                                        + "CDDistance "+CDDistance +" km\n";
-
-                    var radioString = "input";
-                    let checkbox = document.createElement(radioString);
-                    checkbox.type = "checkbox";
-                    c1.appendChild(checkbox);
-                    row.insertBefore(c1, row.firstChild);
-
-                }).catch(error => {
-                    // Handle any errors during the fetch
-                console.error('Error:', error);
-                });
-*/
 
 
     async function fetchDistance(url,key) {
@@ -250,10 +250,6 @@
 
 
 
-
-
-
-
     fetch('/get_matches?driverId='+driverId)
       .then(response => response.json())
       .then(json_data => {
@@ -265,7 +261,7 @@
             }
             requestMap.set(requestNum, entry);
 
-        }
+        };
 
         let counter = 0;
         let table = document.getElementById("gallery");
@@ -362,21 +358,13 @@
                 c2.innerText = mapAddressStart.get("address");
                 c3.innerText = mapAddressDest.get("address");
 
-                /*
-                (async () => {
-                    console.log("DETUOR_URL AWAIT ="+getDistance);
-                    //detour_km = await fetchDistance(getDistance); // wait here like it's "synchronous"
-                    console.log('DETOUR 3:', detour_km);
-                    c4.innerText = mapAddressStart.get("starttime")
-                    + "\n"+"Umweg "+map1.get("offerFromDriver")+" km\n"
-                    + "ABDistance "+ABDistance +" km\n"
-                    + "CDDistance "+CDDistance +" km\n";
-                })();
-                */
 
-                let CDDistance=value[1][3].distance;
+                var CDDistance=value[1][3].distance;
 
                 var detour_km=map1.get("detour");
+                ABDistance =  map1.get("distance");
+                var ACDBDistance =  map1.get("route");
+                CDDistance = map1.get("pass_distance");
                 //var id1=0
                 //var id2=0
                 //getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
@@ -393,32 +381,12 @@
                     text = mapAddressStart.get("starttime")
                     + "\n"+"Umweg "+detour_km+" km\n"
                     + "ABDistance "+ABDistance +" km\n"
+                    + "ACDBDistance "+ACDBDistance +" km\n"
                     + "CDDistance "+CDDistance +" km\n";
                     console.log("text="+text);
 
                     c4.innerText = text;
 
-                //}).catch(error => {
-                    // Handle any errors during the fetch
-                //     console.error('Error:', error);
-                //});
-
-                /*
-                c4.innerText = mapAddressStart.get("starttime")
-                    + "\n"+"Umweg "+detour_km+" km\n"
-                    + "ABDistance "+ABDistance +" km\n"
-                    + "CDDistance "+CDDistance +" km\n";
-                */
-
-
-                /*
-                c4.innerText = mapAddressStart.get("starttime")
-                                    //+"\n"+mapDistancePrice.get("distance")+" km\n"
-                                    //+ mapDistancePrice.get("price")+" Euro"
-                                    + "\n"+"Umweg "+detour_km+" km\n"
-                                    + "ABDistance "+ABDistance +" km\n"
-                                    + "CDDistance "+CDDistance +" km\n";
-                */
 
                 var radioString = "input";
                 let checkbox = document.createElement(radioString);
@@ -429,24 +397,6 @@
                 c1.appendChild(label);
                 row.insertBefore(c1, row.firstChild);
 
-
-/*
-                 console.log("mapdetour 2==>"+detour_km);
-                // Add data to c1 and c2
-                c1.innerText = currNumber;
-                c2.innerText = mapAddressStart.get("address");
-                c3.innerText = mapAddressDest.get("address");
-                c4.innerText = mapAddressStart.get("starttime")+"\n"+mapDistancePrice.get("distance")+" km\n"
-                                    + mapDistancePrice.get("price")+" Euro"+ "\n"+detour_km+" km";
-*/
-                //c5.innerText = img;
-/*
-                var radioString = "input";
-                let checkbox = document.createElement(radioString);
-                checkbox.type = "checkbox";
-                c1.appendChild(checkbox);
-                row.insertBefore(c1, row.firstChild);
- */
             }
 
         })
