@@ -206,6 +206,55 @@ def handle_ride():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/withdrawOffers', methods=['POST'])
+def withdraw_offer():
+    try:
+        data = request.get_json()
+
+        # Extract driver and passengers
+        driver_id = data.get("driver")
+        passengers = data.get("passengers")
+        print(driver_id)
+        print(passengers)
+        if not driver_id or not isinstance(passengers, list):
+            return jsonify({"error": "Invalid input format"}), 400
+
+        print("driverId=", coordinates.get(int(driver_id))[0])
+        passIdList = list(map(int, passengers))
+
+        print("passIdList=", passIdList)
+
+
+        coordinates.get(int(driver_id))[0]["offersSentTo"] = passIdList
+        print("offersSentTo:",coordinates.get(int(driver_id))[0]["offersSentTo"])
+        print("passIdList=", passIdList)
+
+        for passId in passIdList:
+            print("passId:",passId)
+
+            coordinates.get(int(driver_id))[0]["offersSentTo"].remove(passId)
+
+            listOffersFrom = coordinates.get(int(passId))[0]["offersFrom"]
+            print("==>offersFrom:",listOffersFrom)
+
+            while driver_id in listOffersFrom:
+                listOffersFrom.remove(driver_id)
+            coordinates.get(int(passId))[0]["offersFrom"] = listOffersFrom
+
+
+        # Example response
+        response = {
+            "message": "Ride cancellation received",
+            "driver": driver_id
+            #"passengers": list
+        }
+
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 
 

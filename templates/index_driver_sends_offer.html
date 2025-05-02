@@ -29,54 +29,70 @@
         }
 
         .switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 34px;
-    }
+          position: relative;
+          display: inline-block;
+          width: 60px;
+          height: 34px;
+        }
 
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+        .switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
 
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: 0.4s;
-      border-radius: 34px;
-    }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 34px;
+        }
 
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50%;
-    }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 26px;
+          width: 26px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
 
-    input:checked + .slider {
-      background-color: #2196F3;
-    }
+        input:checked + .slider {
+          background-color: #2196F3;
+        }
 
-    input:checked + .slider:before {
-      transform: translateX(26px);
-    }
+        input:focus + .slider {
+          box-shadow: 0 0 1px #2196F3;
+        }
 
-    .status {
-      margin-top: 15px;
-      font-family: Arial, sans-serif;
-      font-size: 18px;
+        input:checked + .slider:before {
+          transform: translateX(26px);
+        }
+
+       .myButton {
+        background-color: blue;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+
+        .myButton:hover {
+            background-color: darkblue; /* Darker color on hover */
+        }
+
+     .clicked {
+        background-color: green; /* New color when clicked */
+        color: white;
     }
 
 
@@ -102,7 +118,10 @@
 
 <!-- =================================== -->
 <h1>Passagiere und Gepäck</h1>
-
+<label class="switch">
+    <input type="checkbox" id="toggleSwitch" />
+    <span class="slider"></span>
+</label>
 
 <div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
     <div class="wmax600 mx-auto">
@@ -114,11 +133,10 @@
     </div>
 </div>
 
-<div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
+<!--div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
     <div class="wmax600 mx-auto">
         <div class="address-page">
             <form class="flex flex--column" name="passengersList" id="passengersList">
-                <!--h3 class="txt-l txt-bold mb6"><strong> Passende Passagiere</strong></h3-->
 
                 <button type="submit" class="btn round submit-order-button" id="submitPassengers" name="submitPassengers">
                     Angebote machen
@@ -126,7 +144,7 @@
             </form>
         </div>
     </div>
-</div>
+</div-->
 
 
 <div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
@@ -157,6 +175,7 @@
     var LUGGAGE_IMAGE="luggage_image_";
     var PASSENGER_IMAGE="passenger_image_";
     var IMAGE_EXTENTION = ".jpeg";
+    let percentage = 0.2;
 
     const params = new URLSearchParams(window.location.search);
     const driverId = params.get("driverId") || "DriverIdUnknown";
@@ -264,11 +283,12 @@
         };
 
         let counter = 0;
+        let currNumber = 0;
         let table = document.getElementById("gallery");
         requestMap.forEach((value, key) => {
 
             console.log(value, key);
-            let currNumber = value[0];
+            currNumber = value[0];
             console.log(key, currNumber);
 
             let map1 = new Map(Object.entries(value[1][3]));
@@ -365,6 +385,7 @@
                 ABDistance =  map1.get("distance");
                 var ACDBDistance =  map1.get("route");
                 CDDistance = map1.get("pass_distance");
+                var match = parseFloat(detour_km) < percentage*parseFloat(CDDistance);
                 //var id1=0
                 //var id2=0
                 //getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
@@ -382,19 +403,108 @@
                     + "\n"+"Umweg "+detour_km+" km\n"
                     + "ABDistance "+ABDistance +" km\n"
                     + "ACDBDistance "+ACDBDistance +" km\n"
-                    + "CDDistance "+CDDistance +" km\n";
+                    + "CDDistance "+CDDistance +" km\n"
+                    + "Match :" + match ;
                     console.log("text="+text);
 
                     c4.innerText = text;
 
+                //const label = document.createElement("label");
+                //label.className = "switch";
 
-                var radioString = "input";
-                let checkbox = document.createElement(radioString);
-                checkbox.type = "checkbox";
-                c1.appendChild(checkbox);
-                const label = document.createElement("label");
-                label.className = "switch";
-                c1.appendChild(label);
+               // let checkbox = document.createElement("input");
+               // checkbox.type = "checkbox";
+               // c1.appendChild(checkbox);
+
+                const button = document.createElement('button');
+                button.className="myButton";
+                button.innerHTML = 'Angebot Machen';
+                button.value = currNumber;
+                //button.addEventListener('click', function() {
+                // Add your button click logic here
+                //   alert('Button in row ' + (i + 1) + ' clicked!');
+                //});
+                button.onclick = function() {
+                     if (button.classList.contains('clicked')){
+                        alert('Angebot in row '+ this.value +' abziehen!');
+
+
+                let listPass = [];
+                listPass.push(parseInt(this.value));
+                const payload = {driver: parseInt(driverId), passengers:listPass};
+                  const payloadBody = JSON.stringify(payload);
+                  console.log("payloadBody:"+payloadBody);
+                  fetch("/withdrawOffers", {
+                    method: "POST",
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: payloadBody
+                  })
+                  .then(response => {
+                    // Handle the response from the server
+                    if (response.ok) {
+                      console.log("Form submitted successfully");
+                      const json = response.text();
+                      console.log("JSON:"+json);
+                      document.getElementById('submitPassengers').disabled = true;
+                      //document.getElementById("result").textContent = json;
+                      return json;
+                    } else {
+                      console.error("Form submission failed");
+                    }
+                  }).then((data) => {
+                    console.log("DATA:"+data);
+                    //document.getElementById("result").textContent = data;
+                  });
+
+
+                        button.classList.remove('clicked');
+                        button.innerHTML = 'Angebot machen.';
+
+
+                     } else {
+                        //alert('Angebot in row ' + (i + 1) + ' machen!');
+                        alert('Angebot in row ' + this.value + ' machen!');
+                        button.classList.toggle('clicked');
+                        button.innerHTML = 'Angebot abziehen';
+
+                let listPass = [];
+                listPass.push(parseInt(this.value));
+                const payload = {driver: parseInt(driverId), passengers:listPass};
+                  const payloadBody = JSON.stringify(payload);
+                  console.log("payloadBody:"+payloadBody);
+                  fetch("/rideOffers", {
+                    method: "POST",
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: payloadBody
+                  })
+                  .then(response => {
+                    // Handle the response from the server
+                    if (response.ok) {
+                      console.log("Form submitted successfully");
+                      const json = response.text();
+                      console.log("JSON:"+json);
+                      document.getElementById('submitPassengers').disabled = true;
+                      //document.getElementById("result").textContent = json;
+                      return json;
+                    } else {
+                      console.error("Form submission failed");
+                    }
+                  }).then((data) => {
+                    console.log("DATA:"+data);
+                    //document.getElementById("result").textContent = data;
+                  });
+
+
+
+                        button.classList.add('clicked');
+                       }
+                };
+
+                c1.appendChild(button);
                 row.insertBefore(c1, row.firstChild);
 
             }
@@ -563,126 +673,6 @@ async function doesFileExist(urlToFile) {
 
 
 
-
-function  load_gallery (){
-
-     fetch('/get_all')
-      .then(response => response.json())
-      .then(json_data => {
-
-        const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
-        for (entry of arr) {
-            for( part of entry){
-                var requestNum = part[0];  //.get("request_number");
-            }
-            requestMap.set(requestNum, entry);
-
-        }
-
-        let counter = 0;
-        let table = document.getElementById("gallery");
-        requestMap.forEach((value, key) => {
-
-            console.log('=======>>', key);
-            console.log(value, key);
-            let currNumber = value[0];
-            console.log(key, currNumber);
-            console.log("===>key",key, value[0]);
-
-            let mapAddressStart = new Map(Object.entries(value[1][1]));
-            let mapAddressDest = new Map(Object.entries(value[1][2]));
-            console.log(mapAddressStart.get("address"));
-            console.log(mapAddressDest.get("address"));
-
-            console.log(key, value[1][2]);
-            counter= counter+1;
-
-            let row = table.insertRow(-1);
-            let c1 = row.insertCell(0);
-            let c2 = row.insertCell(1);
-            let c3 = row.insertCell(2);
-            let c4 = row.insertCell(3);
-            //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
-            //var myImage.src="../images/12_luggage.jpg"
-            let c5 = row.insertCell(4);
-            let c6 = row.insertCell(5);
-
-
-            // Create an image element
-            const img = document.createElement("img");
-            img.src = "./images/defalaut_passanger.jpg";
-            img.alt = "defalaut passanger image";
-
-            const hostname = window.location.hostname;
-            console.log(hostname);
-
-            var fileNameLuggageString="/images/"+LUGGAGE_IMAGE+currNumber+IMAGE_EXTENTION;
-
-            console.log("===>"+fileNameLuggageString);
-
-            doesFileExist(fileNameLuggageString)
-            .then(exists => {
-                if (exists) {
-                    console.log("File exists!");
-                     img.src = fileNameLuggageString
-                } else {
-                    console.log("File does not exist!");
-                }
-            });
-
-            // Add the image to the cell
-            c6.appendChild(img);
-
-
-
-            // Create an image element
-            const img1 = document.createElement("img");
-            img1.src = "./images/default_luggage.jpg";
-            img1.alt = "defalaut luggage image";
-
-            var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
-
-            console.log(fileNamePersonString);
-
-            doesFileExist(fileNamePersonString)
-            .then(exists => {
-                if (exists) {
-                    console.log("File exists!");
-                     img1.src = fileNamePersonString
-                } else {
-                    console.log("File does not exist!");
-                }
-            });
-
-
-
-            // Add the image to the cell
-            c5.appendChild(img1);
-
-
-            // Add data to c1 and c2
-            c1.innerText = currNumber;
-            c2.innerText = mapAddressStart.get("address");
-            c3.innerText = mapAddressDest.get("address");
-            c4.innerText = mapAddressStart.get("starttime");
-            //c5.innerText = img;
-
-            var radioString = "input";
-            let checkbox = document.createElement(radioString);
-            checkbox.type = "checkbox";
-            c1.appendChild(checkbox);
-            row.insertBefore(c1, row.firstChild);
-
-        })
-
-
-      })
-      .catch(error => {
-        // Handle any errors during the fetch
-        console.error('Error:', error);
-      });
-
- }
 
 </script>
 </body>
