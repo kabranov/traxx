@@ -220,10 +220,21 @@ example response
 }
 ```
 
+### 8). Curl command to witdraw and offer from a driver to a passenger
+
+```
+curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/withdrawOffers' \
+--header 'Content-Type: application/json' \
+--data '{
+    "driver": 4,
+    "passengers": [
+        1
+    ]
+}'
+```
 
 
-
-### 8). Project progress
+### 9). Project progress
 
 #### DONE     
 ```
