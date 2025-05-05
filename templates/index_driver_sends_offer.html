@@ -156,7 +156,7 @@
                 <th> Passagier Nummer </th>
                 <th> Startpunkt </th>
                 <th> Ziel </th>
-                <th> Startzeit </th>
+                <th> Startzeit,Entfernung, Preis </th>
                 <th> Mitfahrer </th>
                 <th> Gepäck </th>
                 </thead>
@@ -176,6 +176,9 @@
     var PASSENGER_IMAGE="passenger_image_";
     var IMAGE_EXTENTION = ".jpeg";
     let percentage = 0.2;
+
+    let charge_CD = 0.1 // Euro/km
+    let charge_detour = 1.0 // Euro/km
 
     const params = new URLSearchParams(window.location.search);
     const driverId = params.get("driverId") || "DriverIdUnknown";
@@ -399,11 +402,22 @@
                     //id1 = mapdetour.get("id1");
                     //id2 = mapdetour.get("id2");
                     console.log("mapdetour 1==>"+detour_km);
+
+                    let charge_CD = 0.1 // Euro/km
+                    let charge_detour = 1.0 // Euro/km
+
+                    if(parseFloat(detour_km) > 0) {
+                        charge = charge_CD*parseFloat(CDDistance) + charge_detour*parseFloat(detour_km);
+                    } else {
+                         charge = charge_CD*parseFloat(CDDistance) ;
+                    }
+
                     text = mapAddressStart.get("starttime")
                     + "\n"+"Umweg "+detour_km+" km\n"
                     + "ABDistance "+ABDistance +" km\n"
                     + "ACDBDistance "+ACDBDistance +" km\n"
                     + "CDDistance "+CDDistance +" km\n"
+                    + "Price: "+ charge.toFixed(2) +" Euro\n"
                     + "Match :" + match ;
                     console.log("text="+text);
 
