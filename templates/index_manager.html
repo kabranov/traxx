@@ -41,6 +41,7 @@
             <table id="gallery">
                     <thead>
                     <th> Passagier Nummer </th>
+                    <th> Type </th>
                     <th> Startpunkt </th>
                     <th> Ziel </th>
                     <th> Startzeit </th>
@@ -101,10 +102,11 @@
             let c2 = row.insertCell(1);
             let c3 = row.insertCell(2);
             let c4 = row.insertCell(3);
+            let c5 = row.insertCell(4);
             //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
             //var myImage.src="../images/12_luggage.jpg"
-            let c5 = row.insertCell(4);
             let c6 = row.insertCell(5);
+            let c7 = row.insertCell(6);
 
             //const cell = row.insertCell();
 
@@ -131,7 +133,7 @@
             });
 
             // Add the image to the cell
-            c6.appendChild(img);
+            c7.appendChild(img);
 
 
 
@@ -157,14 +159,15 @@
 
 
             // Add the image to the cell
-            c5.appendChild(img1);
+            c6.appendChild(img1);
 
 
             // Add data to c1 and c2
             c1.innerText = currNumber;
-            c2.innerText = mapAddressStart.get("address");
-            c3.innerText = mapAddressDest.get("address");
-            c4.innerText = mapAddressStart.get("starttime");
+            c2.innerText = value[1][0]["type"];
+            c3.innerText = mapAddressStart.get("address");
+            c4.innerText = mapAddressDest.get("address");
+            c5.innerText = mapAddressStart.get("starttime");
             //c5.innerText = img;
 
         })
