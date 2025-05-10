@@ -782,6 +782,14 @@ def get_distance_request(id1,id2):
         print("response CD map_route_str=",route_CD_str)
         route_detour["pass_route"]=route_CD_str
 
+        # Euro/km
+        charge_CD = 0.1
+        # Euro/km
+        charge_detour = 1.0
+        if detour_float > 0:
+            route_detour["price_route"]="{:.2f}".format(charge_CD*route_CD_float+charge_detour*detour_float)
+        else:
+            route_detour["price_route"]="{:.2f}".format(charge_CD*route_CD_float)
 
         return route_detour
 

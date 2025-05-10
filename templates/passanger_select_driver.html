@@ -42,6 +42,37 @@
         .round-button:hover {
             background-color: red;
         }
+
+        .myButton {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .myButton:hover {
+            background-color: green; /* Darker color on hover */
+        }
+
+        .myButton:clicked {
+            background-color: grey; /* New color when clicked */
+            color: white;
+        }
+
+        .clicked {
+            background-color: green; /* New color when clicked */
+            color: white;
+        }
+
+         #timer {
+          font-size: 4em;
+          font-family: Arial, sans-serif;
+          color: darkred;
+        }
+
+
     </style>
 
     <!-- Default styling. Feel free to remove! -->
@@ -102,11 +133,14 @@
     <div class="wmax800 mx-auto">
         <div class="address-page">
             <hr>
+            <div id="timer">60</div>
+            <hr>
             <table id="gallery">
                 <thead>
                 <th> Fahrer Nummer </th>
                 <th> Price/Zeit </th>
                 <th> Fahrerphoto</th>
+                <th> Buchen </th>
                 </thead>
             </table>
         </div>
@@ -251,7 +285,7 @@
                     let btn = document.createElement("button");
                     //checkbox.type = "radio";
                     btn.innerHTML = "Buchen";
-                    btn.classList.add("round-button");
+                    btn.classList.add("myButton");
                     btn.onclick = function() {
 
                                   // TO FIX - send the selected input to backend and save it
@@ -274,7 +308,7 @@
                                       console.log("Form submitted successfully");
                                       const json = response.text();
                                       console.log("JSON:"+json);
-                                      document.getElementById('submitPassengers').disabled = true;
+                                      //document.getElementById('submitPassengers').disabled = true;
                                       document.getElementById("result").textContent = json;
                                       return json;
                                     } else {
@@ -283,12 +317,31 @@
                                   }).then((data) => {
                                     console.log("DATA RECEIVED:"+data);
                                     //document.getElementById("result").textContent = data;
+                                      btn.disabled = true;
+                                      btn.style.backgroundColor = 'grey';
+                                      disableTableButtons();
+
+                                      let timeLeft = 60; // seconds
+
+                                        const timerElement = document.getElementById('timer');
+
+                                        const countdown = setInterval(() => {
+                                          timeLeft--;
+                                          timerElement.textContent = timeLeft;
+
+                                          if (timeLeft <= 0) {
+                                            clearInterval(countdown);
+                                            timerElement.textContent = "Time's up!";
+                                          }
+                                        }, 1000); // update every second
+
+
                                   });
 
                          alert("Gebucht Fahrerangebot: " + currNumber);
                      };
                     //c1.appendChild(checkbox);
-                    c1.appendChild(btn);
+                    c4.appendChild(btn);
                     row.insertBefore(c1, row.firstChild);
                      }
                 }
@@ -302,15 +355,23 @@
 
 
 
- async function doesFileExist(urlToFile) {
+async function doesFileExist(urlToFile) {
   try {
     const response = await fetch(urlToFile, { method: 'GET' });
     return response.ok; // Returns true if status is 200-299
   } catch (error) {
     return false;
   }
- }
+}
 
+function disableTableButtons() {
+  const table = document.getElementById("gallery");
+  buttons = table.querySelectorAll("button");
+  buttons.forEach(button => {
+    button.disabled = true;
+    button.style.backgroundColor = 'grey';
+  });
+}
 
 
 
