@@ -1,10 +1,12 @@
-from flask import Flask, request, render_template,jsonify, send_from_directory,redirect,url_for
+from flask import Flask,Response, request, render_template,jsonify, send_from_directory,redirect,url_for,stream_with_context
 #from geopy.geocoders import Nominatim
 import os
 import geocoder
 import math
 import requests
 import base64
+import time
+from queue import Queue
 
 app = Flask(__name__)
 
@@ -878,7 +880,43 @@ def get_route_coordinates(start_coords, end_coords, waypoints=None):
 
 # route_coords = get_route_coordinates(start_coordinates, end_coordinates)
 
+@app.route('/bla')
+def index():
+    return render_template('websock.html')
 
+@app.route('/moo')
+def index1():
+    return render_template('websock1.html')
+
+clients = []
+@app.route('/send_notification', methods=['POST'])
+def send_notification():
+    message = request.json.get("message", "No message")
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    full_message = f"{timestamp} - {message}"
+
+    # Push the message to all connected clients
+    for q in clients:
+        q.put(full_message)
+    return {"status": "Notification sent", "message": full_message}, 200
+
+@app.route('/notifications')
+def notifications():
+    def event_stream(q: Queue):
+        try:
+            while True:
+                # Wait for new messages
+                msg = q.get()
+                print("mgs==>",msg)
+                yield f"data: {msg}\n\n"
+        except GeneratorExit:
+            # Client disconnected
+            clients.remove(q)
+
+    # Create a new queue for this client
+    q = Queue()
+    clients.append(q)
+    return Response(stream_with_context(event_stream(q)), mimetype="text/event-stream")
 
 
 if __name__ == '__main__':

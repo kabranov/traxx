@@ -138,7 +138,7 @@
             <table id="gallery">
                 <thead>
                 <th> Fahrer Nummer </th>
-                <th> Price/Zeit </th>
+                <th> Preis/Zeit </th>
                 <th> Fahrerphoto</th>
                 <th> Buchen </th>
                 </thead>
@@ -289,6 +289,35 @@
                     btn.onclick = function() {
 
                                   // TO FIX - send the selected input to backend and save it
+
+                                  const payloadNotification = {message: "Confirmation from passenger: "+passenger_id +" PLEASE CONFIRM OR REJECT THE REQUEST"};
+                                  const payloadNotificationBody = JSON.stringify(payloadNotification);
+                                  console.log("payloadNotificationBody:"+payloadNotificationBody);
+
+                                  fetch("/send_notification", {
+                                    method: "POST",
+                                    headers: {
+                                      'Content-Type': 'application/json'
+                                    },
+                                    body: payloadNotificationBody
+                                  })
+                                  .then(response => {
+                                    // Handle the response from the server
+                                    if (response.ok) {
+                                      console.log("Notification submitted successfully");
+                                      const json = response.text();
+                                      console.log("JSON:"+json);
+
+                                      return json;
+                                    } else {
+                                      console.error("Form submission failed");
+                                    }
+                                  }).then((data) => {
+                                    console.log("DATA RECEIVED:"+data);
+
+                                  });
+
+
 
 
                                   const payload = {passenger: parseInt(passenger_id), selectedDriver:parseInt(currNumber)};

@@ -166,524 +166,541 @@
 </div>
 </div>
 </div>
+NOTIFICATIONS LIST ( WORK IN PROGRESS)
+<ul id="notifications"></ul>
 
 
 <script>
 
-    let requestMap = new Map();
-    let responseMap = new Map();
-    var LUGGAGE_IMAGE="luggage_image_";
-    var PASSENGER_IMAGE="passenger_image_";
-    var IMAGE_EXTENTION = ".jpeg";
-    let percentage = 0.2;
+    const eventSource = new EventSource("/notifications");
 
-    let charge_CD = 0.1 // Euro/km
-    let charge_detour = 1.0 // Euro/km
+    eventSource.onmessage = function(event) {
+      const notificationList = document.getElementById("notifications");
+      const newItem = document.createElement("li");
+      newItem.textContent = event.data;
+      notificationList.appendChild(newItem);
+    };
 
-    const params = new URLSearchParams(window.location.search);
-    const driverId = params.get("driverId") || "DriverIdUnknown";
-    console.log("===>driverId="+driverId);
-    document.getElementById("requestId").textContent = "Ihr Angebotreferenznummer ist "+driverId;
+    eventSource.onerror = function(error) {
+      console.error("EventSource failed:", error);
+    };
 
-    getEntry = "/get?id="+driverId;
-    console.log("getEntry="+getEntry);
-    async function fetchEntry() {
-        try {
-            const response = await fetch(getEntry);
-            if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const json_data = await response.json();
-            // Process the data here
 
-            const startAddress = json_data[1]['address']
-            const endAddress = json_data[2]['address']
 
-             document.getElementById("requestId").innerHTML = "Ihr Angebotreferenznummer ist "+driverId+
-                                                                "<br><br>"+
-                                                                "<br>Startadresse:"+startAddress +
-                                                                "<br>Zieladresse:"+endAddress;
+let requestMap = new Map();
+let responseMap = new Map();
+var LUGGAGE_IMAGE="luggage_image_";
+var PASSENGER_IMAGE="passenger_image_";
+var IMAGE_EXTENTION = ".jpeg";
+let percentage = 0.2;
 
-            console.log(json_data);
-        } catch (error) {
-            // Handle errors
-            console.error('Fetch error:', error);
+let charge_CD = 0.1 // Euro/km
+let charge_detour = 1.0 // Euro/km
+
+const params = new URLSearchParams(window.location.search);
+const driverId = params.get("driverId") || "DriverIdUnknown";
+console.log("===>driverId="+driverId);
+document.getElementById("requestId").textContent = "Ihr Angebotreferenznummer ist "+driverId;
+
+getEntry = "/get?id="+driverId;
+console.log("getEntry="+getEntry);
+async function fetchEntry() {
+    try {
+        const response = await fetch(getEntry);
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const json_data = await response.json();
+        // Process the data here
+
+        const startAddress = json_data[1]['address']
+        const endAddress = json_data[2]['address']
+
+         document.getElementById("requestId").innerHTML = "Ihr Angebotreferenznummer ist "+driverId+
+                                                            "<br><br>"+
+                                                            "<br>Startadresse:"+startAddress +
+                                                            "<br>Zieladresse:"+endAddress;
+
+        console.log(json_data);
+    } catch (error) {
+        // Handle errors
+        console.error('Fetch error:', error);
     }
+}
 
-    fetchEntry(); // Call the async function
-
-
-
+fetchEntry(); // Call the async function
 
 
 
 
-    var ABDistance = 0;
-    var ACDBDistance = 0;
-    getABDistance = "/get_distance?startId="+driverId+"&destId="+driverId;
-    console.log("getABDistance="+getABDistance);
-    async function fetchABDistance() {
-        try {
-            const response = await fetch(getABDistance);
-            if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const json_data = await response.json();
-            // Process the data here
-            jsonStr = json_data.replace(/'/g, '"');
-            obj = JSON.parse(jsonStr);
-            mapdetour = new Map(Object.entries(obj));
-            ABDistance = mapdetour.get("distance");
-            ACDBDistance = mapdetour.get("route");
-            console.log("mapdetour 1==>"+ABDistance);
-            console.log(jsonStr);
-        } catch (error) {
-            // Handle errors
-            console.error('Fetch error:', error);
+
+
+
+var ABDistance = 0;
+var ACDBDistance = 0;
+getABDistance = "/get_distance?startId="+driverId+"&destId="+driverId;
+console.log("getABDistance="+getABDistance);
+async function fetchABDistance() {
+    try {
+        const response = await fetch(getABDistance);
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const json_data = await response.json();
+        // Process the data here
+        jsonStr = json_data.replace(/'/g, '"');
+        obj = JSON.parse(jsonStr);
+        mapdetour = new Map(Object.entries(obj));
+        ABDistance = mapdetour.get("distance");
+        ACDBDistance = mapdetour.get("route");
+        console.log("mapdetour 1==>"+ABDistance);
+        console.log(jsonStr);
+    } catch (error) {
+        // Handle errors
+        console.error('Fetch error:', error);
     }
+}
 
-    fetchABDistance(); // Call the async function
+fetchABDistance(); // Call the async function
 
 
 
-    async function fetchDistance(url,key) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const json_data = await response.json();
-            // Process the data here
-            jsonStr = json_data.replace(/'/g, '"');
-            obj = JSON.parse(jsonStr);
-            mapdetour = new Map(Object.entries(obj));
-            //currDistance = mapdetour.get("distance");
-            currDistance = mapdetour.get(key);
-            console.log("detour ==>"+currDistance);
-            console.log(jsonStr);
-            return currDistance;
-        } catch (error) {
-            // Handle errors
-            console.error('Fetch error:', error);
+async function fetchDistance(url,key) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const json_data = await response.json();
+        // Process the data here
+        jsonStr = json_data.replace(/'/g, '"');
+        obj = JSON.parse(jsonStr);
+        mapdetour = new Map(Object.entries(obj));
+        //currDistance = mapdetour.get("distance");
+        currDistance = mapdetour.get(key);
+        console.log("detour ==>"+currDistance);
+        console.log(jsonStr);
+        return currDistance;
+    } catch (error) {
+        // Handle errors
+        console.error('Fetch error:', error);
     }
+}
 
 
 
-    fetch('/get_matches?driverId='+driverId)
-      .then(response => response.json())
-      .then(json_data => {
+fetch('/get_matches?driverId='+driverId)
+  .then(response => response.json())
+  .then(json_data => {
 
-        const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
-        for (entry of arr) {
-            for( part of entry){
-                var requestNum = part[0];  //.get("request_number");
-            }
-            requestMap.set(requestNum, entry);
+    const arr = Object.keys(json_data).map((key) => [key, json_data[key]]);
+    for (entry of arr) {
+        for( part of entry){
+            var requestNum = part[0];  //.get("request_number");
+        }
+        requestMap.set(requestNum, entry);
 
-        };
+    };
 
-        let counter = 0;
-        let currNumber = 0;
-        let table = document.getElementById("gallery");
-        requestMap.forEach((value, key) => {
+    let counter = 0;
+    let currNumber = 0;
+    let table = document.getElementById("gallery");
+    requestMap.forEach((value, key) => {
 
-            console.log(value, key);
-            currNumber = value[0];
-            console.log(key, currNumber);
+        console.log(value, key);
+        currNumber = value[0];
+        console.log(key, currNumber);
 
-            let map1 = new Map(Object.entries(value[1][3]));
+        let map1 = new Map(Object.entries(value[1][3]));
 
-            console.log("TYPE offerFromDriver===>", map1.get("offerFromDriver"));
-
-
-            if(driverId===map1.get("offerFromDriver")){
-
-                let mapAddressStart = new Map(Object.entries(value[1][1]));
-                let mapAddressDest = new Map(Object.entries(value[1][2]));
-                console.log(mapAddressStart.get("address"));
-                console.log(mapAddressDest.get("address"));
-
-                let mapDistancePrice = new Map(Object.entries(value[1][3]));
-                //console.log('=======>>', mapDistancePrice.get("distance"));
-
-                console.log(key, value[1][2]);
-                counter= counter+1;
-
-                let row = table.insertRow(-1);
-                let c1 = row.insertCell(0);
-                let c2 = row.insertCell(1);
-                let c3 = row.insertCell(2);
-                let c4 = row.insertCell(3);
-                //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
-                //var myImage.src="../images/12_luggage.jpg"
-                let c5 = row.insertCell(4);
-                let c6 = row.insertCell(5);
+        console.log("TYPE offerFromDriver===>", map1.get("offerFromDriver"));
 
 
-                // Create an image element
-                const img = document.createElement("img");
-                img.src = "./images/defalaut_passanger.jpg";
-                img.alt = "defalaut passanger image";
-                img.width = 150;
+        if(driverId===map1.get("offerFromDriver")){
 
-                const hostname = window.location.hostname;
-                console.log(hostname);
+            let mapAddressStart = new Map(Object.entries(value[1][1]));
+            let mapAddressDest = new Map(Object.entries(value[1][2]));
+            console.log(mapAddressStart.get("address"));
+            console.log(mapAddressDest.get("address"));
 
-                var fileNameLuggageString="/images/"+LUGGAGE_IMAGE+currNumber+IMAGE_EXTENTION;
+            let mapDistancePrice = new Map(Object.entries(value[1][3]));
+            //console.log('=======>>', mapDistancePrice.get("distance"));
 
-                console.log("===>"+fileNameLuggageString);
+            console.log(key, value[1][2]);
+            counter= counter+1;
 
-                doesFileExist(fileNameLuggageString)
-                .then(exists => {
-                    if (exists) {
-                        console.log("File exists!");
-                         img.src = fileNameLuggageString
-                    } else {
-                        console.log("File does not exist!");
-                    }
-                });
-
-                // Add the image to the cell
-                c6.appendChild(img);
+            let row = table.insertRow(-1);
+            let c1 = row.insertCell(0);
+            let c2 = row.insertCell(1);
+            let c3 = row.insertCell(2);
+            let c4 = row.insertCell(3);
+            //var img = '<img src="../images/defalaut_passanger.jpg" alt="Description of the image"> ';
+            //var myImage.src="../images/12_luggage.jpg"
+            let c5 = row.insertCell(4);
+            let c6 = row.insertCell(5);
 
 
+            // Create an image element
+            const img = document.createElement("img");
+            img.src = "./images/defalaut_passanger.jpg";
+            img.alt = "defalaut passanger image";
+            img.width = 150;
 
-                // Create an image element
-                const img1 = document.createElement("img");
-                img1.src = "./images/default_luggage.jpg";
-                img1.alt = "defalaut luggage image";
-                img1.width = 150;
+            const hostname = window.location.hostname;
+            console.log(hostname);
 
-                var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
+            var fileNameLuggageString="/images/"+LUGGAGE_IMAGE+currNumber+IMAGE_EXTENTION;
 
-                console.log(fileNamePersonString);
+            console.log("===>"+fileNameLuggageString);
 
-                doesFileExist(fileNamePersonString)
-                .then(exists => {
-                    if (exists) {
-                        console.log("File exists!");
-                         img1.src = fileNamePersonString
-                    } else {
-                        console.log("File does not exist!");
-                    }
-                });
+            doesFileExist(fileNameLuggageString)
+            .then(exists => {
+                if (exists) {
+                    console.log("File exists!");
+                     img.src = fileNameLuggageString
+                } else {
+                    console.log("File does not exist!");
+                }
+            });
+
+            // Add the image to the cell
+            c6.appendChild(img);
 
 
 
-                // Add the image to the cell
-                c5.appendChild(img1);
+            // Create an image element
+            const img1 = document.createElement("img");
+            img1.src = "./images/default_luggage.jpg";
+            img1.alt = "defalaut luggage image";
+            img1.width = 150;
 
-                // Add data to c1 and c2
-                c1.innerText = currNumber;
-                c2.innerText = mapAddressStart.get("address");
-                c3.innerText = mapAddressDest.get("address");
+            var fileNamePersonString ="/images/"+PASSENGER_IMAGE+currNumber+IMAGE_EXTENTION;
 
+            console.log(fileNamePersonString);
 
-                var CDDistance=value[1][3].distance;
-
-                var detour_km=map1.get("detour");
-                ABDistance =  map1.get("distance");
-                var ACDBDistance =  map1.get("route");
-                CDDistance = map1.get("pass_distance");
-                var match = parseFloat(detour_km) < percentage*parseFloat(CDDistance);
-                //var id1=0
-                //var id2=0
-                //getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
-                //console.log("DETUOR_URL="+getDistance);
-                //fetch(getDistance).then(response => response.json()).then(json_data =>
-                //{
-                    //jsonStr = json_data.replace(/'/g, '"');
-                    //obj = JSON.parse(jsonStr);
-                    //mapdetour = new Map(Object.entries(obj));
-                    //detour_km = mapdetour.get("detour");
-                    //id1 = mapdetour.get("id1");
-                    //id2 = mapdetour.get("id2");
-                    console.log("mapdetour 1==>"+detour_km);
-
-                    let charge_CD = 0.1 // Euro/km
-                    let charge_detour = 1.0 // Euro/km
-
-                    if(parseFloat(detour_km) > 0) {
-                        charge = charge_CD*parseFloat(CDDistance) + charge_detour*parseFloat(detour_km);
-                    } else {
-                         charge = charge_CD*parseFloat(CDDistance) ;
-                    }
-
-                    text = mapAddressStart.get("starttime")
-                    + "\n"+"Umweg "+detour_km+" km\n"
-                    + "ABDistance "+ABDistance +" km\n"
-                    + "ACDBDistance "+ACDBDistance +" km\n"
-                    + "CDDistance "+CDDistance +" km\n"
-                    + "Price: "+ charge.toFixed(2) +" Euro\n"
-                    + "Match :" + match ;
-                    console.log("text="+text);
-
-                    c4.innerText = text;
-
-                //const label = document.createElement("label");
-                //label.className = "switch";
-
-               // let checkbox = document.createElement("input");
-               // checkbox.type = "checkbox";
-               // c1.appendChild(checkbox);
-
-                const button = document.createElement('button');
-                button.className="myButton";
-                button.innerHTML = 'Angebot Machen';
-                button.value = currNumber;
-                //button.addEventListener('click', function() {
-                // Add your button click logic here
-                //   alert('Button in row ' + (i + 1) + ' clicked!');
-                //});
-                button.onclick = function() {
-                     if (button.classList.contains('clicked')){
-                        alert('Angebot in row '+ this.value +' abziehen!');
-
-
-                let listPass = [];
-                listPass.push(parseInt(this.value));
-                const payload = {driver: parseInt(driverId), passengers:listPass};
-                  const payloadBody = JSON.stringify(payload);
-                  console.log("payloadBody:"+payloadBody);
-                  fetch("/withdrawOffers", {
-                    method: "POST",
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    body: payloadBody
-                  })
-                  .then(response => {
-                    // Handle the response from the server
-                    if (response.ok) {
-                      console.log("Form submitted successfully");
-                      const json = response.text();
-                      console.log("JSON:"+json);
-                      document.getElementById('submitPassengers').disabled = true;
-                      //document.getElementById("result").textContent = json;
-                      return json;
-                    } else {
-                      console.error("Form submission failed");
-                    }
-                  }).then((data) => {
-                    console.log("DATA:"+data);
-                    //document.getElementById("result").textContent = data;
-                  });
-
-
-                        button.classList.remove('clicked');
-                        button.innerHTML = 'Angebot machen.';
-
-
-                     } else {
-                        //alert('Angebot in row ' + (i + 1) + ' machen!');
-                        alert('Angebot in row ' + this.value + ' machen!');
-                        button.classList.toggle('clicked');
-                        button.innerHTML = 'Angebot abziehen';
-
-                let listPass = [];
-                listPass.push(parseInt(this.value));
-                const payload = {driver: parseInt(driverId), passengers:listPass};
-                  const payloadBody = JSON.stringify(payload);
-                  console.log("payloadBody:"+payloadBody);
-                  fetch("/rideOffers", {
-                    method: "POST",
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    body: payloadBody
-                  })
-                  .then(response => {
-                    // Handle the response from the server
-                    if (response.ok) {
-                      console.log("Form submitted successfully");
-                      const json = response.text();
-                      console.log("JSON:"+json);
-                      document.getElementById('submitPassengers').disabled = true;
-                      //document.getElementById("result").textContent = json;
-                      return json;
-                    } else {
-                      console.error("Form submission failed");
-                    }
-                  }).then((data) => {
-                    console.log("DATA:"+data);
-                    //document.getElementById("result").textContent = data;
-                  });
+            doesFileExist(fileNamePersonString)
+            .then(exists => {
+                if (exists) {
+                    console.log("File exists!");
+                     img1.src = fileNamePersonString
+                } else {
+                    console.log("File does not exist!");
+                }
+            });
 
 
 
-                        button.classList.add('clicked');
-                       }
-                };
+            // Add the image to the cell
+            c5.appendChild(img1);
 
-                c1.appendChild(button);
-                row.insertBefore(c1, row.firstChild);
-
-            }
-
-        })
+            // Add data to c1 and c2
+            c1.innerText = currNumber;
+            c2.innerText = mapAddressStart.get("address");
+            c3.innerText = mapAddressDest.get("address");
 
 
-      })
-      .catch(error => {
-        // Handle any errors during the fetch
-        console.error('Error:', error);
-      });
+            var CDDistance=value[1][3].distance;
+
+            var detour_km=map1.get("detour");
+            ABDistance =  map1.get("distance");
+            var ACDBDistance =  map1.get("route");
+            CDDistance = map1.get("pass_distance");
+            var match = parseFloat(detour_km) < percentage*parseFloat(CDDistance);
+            //var id1=0
+            //var id2=0
+            //getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;
+            //console.log("DETUOR_URL="+getDistance);
+            //fetch(getDistance).then(response => response.json()).then(json_data =>
+            //{
+                //jsonStr = json_data.replace(/'/g, '"');
+                //obj = JSON.parse(jsonStr);
+                //mapdetour = new Map(Object.entries(obj));
+                //detour_km = mapdetour.get("detour");
+                //id1 = mapdetour.get("id1");
+                //id2 = mapdetour.get("id2");
+                console.log("mapdetour 1==>"+detour_km);
+
+                let charge_CD = 0.1 // Euro/km
+                let charge_detour = 1.0 // Euro/km
+
+                if(parseFloat(detour_km) > 0) {
+                    charge = charge_CD*parseFloat(CDDistance) + charge_detour*parseFloat(detour_km);
+                } else {
+                     charge = charge_CD*parseFloat(CDDistance) ;
+                }
+
+                text = mapAddressStart.get("starttime")
+                + "\n"+"Umweg "+detour_km+" km\n"
+                + "ABDistance "+ABDistance +" km\n"
+                + "ACDBDistance "+ACDBDistance +" km\n"
+                + "CDDistance "+CDDistance +" km\n"
+                + "Price: "+ charge.toFixed(2) +" Euro\n"
+                + "Match :" + match ;
+                console.log("text="+text);
+
+                c4.innerText = text;
+
+            //const label = document.createElement("label");
+            //label.className = "switch";
+
+           // let checkbox = document.createElement("input");
+           // checkbox.type = "checkbox";
+           // c1.appendChild(checkbox);
+
+            const button = document.createElement('button');
+            button.className="myButton";
+            button.innerHTML = 'Angebot Machen';
+            button.value = currNumber;
+            //button.addEventListener('click', function() {
+            // Add your button click logic here
+            //   alert('Button in row ' + (i + 1) + ' clicked!');
+            //});
+            button.onclick = function() {
+                 if (button.classList.contains('clicked')){
+                    alert('Angebot in row '+ this.value +' abziehen!');
+
+
+            let listPass = [];
+            listPass.push(parseInt(this.value));
+            const payload = {driver: parseInt(driverId), passengers:listPass};
+              const payloadBody = JSON.stringify(payload);
+              console.log("payloadBody:"+payloadBody);
+              fetch("/withdrawOffers", {
+                method: "POST",
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: payloadBody
+              })
+              .then(response => {
+                // Handle the response from the server
+                if (response.ok) {
+                  console.log("Form submitted successfully");
+                  const json = response.text();
+                  console.log("JSON:"+json);
+                  document.getElementById('submitPassengers').disabled = true;
+                  //document.getElementById("result").textContent = json;
+                  return json;
+                } else {
+                  console.error("Form submission failed");
+                }
+              }).then((data) => {
+                console.log("DATA:"+data);
+                //document.getElementById("result").textContent = data;
+              });
+
+
+                    button.classList.remove('clicked');
+                    button.innerHTML = 'Angebot machen.';
+
+
+                 } else {
+                    //alert('Angebot in row ' + (i + 1) + ' machen!');
+                    alert('Angebot in row ' + this.value + ' machen!');
+                    button.classList.toggle('clicked');
+                    button.innerHTML = 'Angebot abziehen';
+
+            let listPass = [];
+            listPass.push(parseInt(this.value));
+            const payload = {driver: parseInt(driverId), passengers:listPass};
+              const payloadBody = JSON.stringify(payload);
+              console.log("payloadBody:"+payloadBody);
+              fetch("/rideOffers", {
+                method: "POST",
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: payloadBody
+              })
+              .then(response => {
+                // Handle the response from the server
+                if (response.ok) {
+                  console.log("Form submitted successfully");
+                  const json = response.text();
+                  console.log("JSON:"+json);
+                  document.getElementById('submitPassengers').disabled = true;
+                  //document.getElementById("result").textContent = json;
+                  return json;
+                } else {
+                  console.error("Form submission failed");
+                }
+              }).then((data) => {
+                console.log("DATA:"+data);
+                //document.getElementById("result").textContent = data;
+              });
+
+
+
+                    button.classList.add('clicked');
+                   }
+            };
+
+            c1.appendChild(button);
+            row.insertBefore(c1, row.firstChild);
+
+        }
+
+    })
+
+
+  })
+  .catch(error => {
+    // Handle any errors during the fetch
+    console.error('Error:', error);
+  });
 
 
 
 
 async function doesFileExist(urlToFile) {
-  try {
-    const response = await fetch(urlToFile, { method: 'GET' });
-    return response.ok; // Returns true if status is 200-299
-  } catch (error) {
-    return false;
-  }
+try {
+const response = await fetch(urlToFile, { method: 'GET' });
+return response.ok; // Returns true if status is 200-299
+} catch (error) {
+return false;
+}
 }
 
 
-    const selectedNumbers = [];
+const selectedNumbers = [];
 
 
-    const form2= document.getElementById("passengersList");
-    //const nameInput = document.getElementById('submitPassengers');
+const form2= document.getElementById("passengersList");
+//const nameInput = document.getElementById('submitPassengers');
 
-    form2.addEventListener("submit", (event) => {
-        event.preventDefault(); // Prevent the default form submission
+form2.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent the default form submission
 
-        var checkedBoxes = document.querySelectorAll('input:checked');
+    var checkedBoxes = document.querySelectorAll('input:checked');
 
-        if (checkedBoxes.length === 0) {
-            // there are no checked checkboxes
-        alert('no checkboxes checked');
-        } else {
-            // there are some checked checkboxes
-        }
-
-
-        // Iterate through each checked checkbox
-        checkedBoxes.forEach(checkbox => {
-          // Get the parent row of the checkbox
-          const row = checkbox.closest('tr');
-
-        if (row) {
-            // The 'row' variable now holds the closest parent <tr> element
-            //alert("row="+row.cells[0].textContent);
-        } else {
-            // No parent <tr> element found
-            alert('No selection done');
-        }
+    if (checkedBoxes.length === 0) {
+        // there are no checked checkboxes
+    alert('no checkboxes checked');
+    } else {
+        // there are some checked checkboxes
+    }
 
 
-          // Extract the numeric value from the desired cell (e.g., second cell)
-          const numericValue = parseInt(row.cells[0].textContent);
+    // Iterate through each checked checkbox
+    checkedBoxes.forEach(checkbox => {
+      // Get the parent row of the checkbox
+      const row = checkbox.closest('tr');
 
-          // Add the numeric value to the array if it's a valid number
-          if (!isNaN(numericValue)) {
-            selectedNumbers.push(numericValue);
-          }
-        });
-
-
-          const payload = {driver: driverId, passengers:selectedNumbers};
-          const payloadBody = JSON.stringify(payload);
-          console.log("payloadBody:"+payloadBody);
-          fetch("/rideOffers", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: payloadBody
-          })
-          .then(response => {
-            // Handle the response from the server
-            if (response.ok) {
-              console.log("Form submitted successfully");
-              const json = response.text();
-              console.log("JSON:"+json);
-              document.getElementById('submitPassengers').disabled = true;
-              //document.getElementById("result").textContent = json;
-              return json;
-            } else {
-              console.error("Form submission failed");
-            }
-          }).then((data) => {
-            console.log("DATA:"+data);
-            //document.getElementById("result").textContent = data;
-          });
+    if (row) {
+        // The 'row' variable now holds the closest parent <tr> element
+        //alert("row="+row.cells[0].textContent);
+    } else {
+        // No parent <tr> element found
+        alert('No selection done');
+    }
 
 
-        // Log the selected raw numbers
-        console.log(selectedNumbers);
-        alert(selectedNumbers);
+      // Extract the numeric value from the desired cell (e.g., second cell)
+      const numericValue = parseInt(row.cells[0].textContent);
 
-
+      // Add the numeric value to the array if it's a valid number
+      if (!isNaN(numericValue)) {
+        selectedNumbers.push(numericValue);
+      }
     });
 
 
-    const form = document.getElementById("destination");
-
-    form.addEventListener("submit", (event) => {
-        event.preventDefault(); // Prevent the default form submission
-
-        const formData = new FormData(form); // Create a FormData object
-
-
-        formData["start_address"]= document.querySelector(".input.mb11").value;;
-        formData["start_postal-code"]= document.querySelector(".input.input.mb14").value;
-        formData["start_city"]= document.querySelector(".input.mb12").value;
-        formData["start_state"]= document.querySelector(".input.mb13").value;
-        formData["selected_date_time"]=selectedDateTime;
-        console.log(formData["start_address"]);
-        console.log(formData["start_postal-code"]);
-        console.log(formData["start_city"]);
-        console.log(formData["start_state"]);
-        console.log(formData["selected_date_time"]);
-
-
-        formData["dest_address"]= document.querySelector(".input.mb21").value;;
-        formData["dest_postal-code"]= document.querySelector(".input.input.mb24").value;
-        formData["dest_city"]= document.querySelector(".input.mb22").value;
-        formData["dest_state"]= document.querySelector(".input.mb23").value;
-        console.log(formData["dest_address"]);
-        console.log(formData["dest_postal-code"]);
-        console.log(formData["dest_city"]);
-        console.log(formData["dest_state"]);
+      const payload = {driver: driverId, passengers:selectedNumbers};
+      const payloadBody = JSON.stringify(payload);
+      console.log("payloadBody:"+payloadBody);
+      fetch("/rideOffers", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: payloadBody
+      })
+      .then(response => {
+        // Handle the response from the server
+        if (response.ok) {
+          console.log("Form submitted successfully");
+          const json = response.text();
+          console.log("JSON:"+json);
+          document.getElementById('submitPassengers').disabled = true;
+          //document.getElementById("result").textContent = json;
+          return json;
+        } else {
+          console.error("Form submission failed");
+        }
+      }).then((data) => {
+        console.log("DATA:"+data);
+        //document.getElementById("result").textContent = data;
+      });
 
 
-          fetch("/saveCoordinatesDriver", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          })
-          .then(response => {
-            // Handle the response from the server
-            if (response.ok) {
-              console.log("Form submitted successfully");
-              const json = response.text();
-              console.log("JSON:"+json);
-              //document.getElementById("result").textContent = json;
-              return json;
-            } else {
-              console.error("Form submission failed");
-            }
-          }).then((data) => {
-            console.log("DATA:"+data);
-            document.getElementById("result").textContent = data;
-          });
+    // Log the selected raw numbers
+    console.log(selectedNumbers);
+    alert(selectedNumbers);
+
+
+});
+
+
+const form = document.getElementById("destination");
+
+form.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent the default form submission
+
+    const formData = new FormData(form); // Create a FormData object
+
+
+    formData["start_address"]= document.querySelector(".input.mb11").value;;
+    formData["start_postal-code"]= document.querySelector(".input.input.mb14").value;
+    formData["start_city"]= document.querySelector(".input.mb12").value;
+    formData["start_state"]= document.querySelector(".input.mb13").value;
+    formData["selected_date_time"]=selectedDateTime;
+    console.log(formData["start_address"]);
+    console.log(formData["start_postal-code"]);
+    console.log(formData["start_city"]);
+    console.log(formData["start_state"]);
+    console.log(formData["selected_date_time"]);
+
+
+    formData["dest_address"]= document.querySelector(".input.mb21").value;;
+    formData["dest_postal-code"]= document.querySelector(".input.input.mb24").value;
+    formData["dest_city"]= document.querySelector(".input.mb22").value;
+    formData["dest_state"]= document.querySelector(".input.mb23").value;
+    console.log(formData["dest_address"]);
+    console.log(formData["dest_postal-code"]);
+    console.log(formData["dest_city"]);
+    console.log(formData["dest_state"]);
+
+
+      fetch("/saveCoordinatesDriver", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        // Handle the response from the server
+        if (response.ok) {
+          console.log("Form submitted successfully");
+          const json = response.text();
+          console.log("JSON:"+json);
+          //document.getElementById("result").textContent = json;
+          return json;
+        } else {
+          console.error("Form submission failed");
+        }
+      }).then((data) => {
+        console.log("DATA:"+data);
+        document.getElementById("result").textContent = data;
+      });
 
 
 
-          //  location.href = "/manager";
-          //  location.replace("/manager");
-           // restartExample();
+      //  location.href = "/manager";
+      //  location.replace("/manager");
+       // restartExample();
 
-        });
+    });
 
 
 

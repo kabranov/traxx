@@ -233,6 +233,14 @@ curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000/withdrawO
 }'
 ```
 
+### 9). Curl command to send notification
+
+curl --location 'http://ec2-44-202-55-203.compute-1.amazonaws.com:5000//send_notification' \
+--header 'Content-Type: application/json' \
+--data '{
+"message": "confirmation from passenger 1, accept yes, no"
+}'
+
 
 ### 9). Project progress
 
