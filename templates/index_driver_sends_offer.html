@@ -133,19 +133,6 @@
     </div>
 </div>
 
-<!--div class="round border border--gray-lighter px12 py24" style="min-height: 100px;">
-    <div class="wmax600 mx-auto">
-        <div class="address-page">
-            <form class="flex flex--column" name="passengersList" id="passengersList">
-
-                <button type="submit" class="btn round submit-order-button" id="submitPassengers" name="submitPassengers">
-                    Angebote machen
-                </button>
-            </form>
-        </div>
-    </div>
-</div-->
-
 
 <div class="round border border--gray-lighter px24 py24" style="min-height: 140px;">
     <div class="wmax800 mx-auto">
@@ -166,8 +153,9 @@
 </div>
 </div>
 </div>
-NOTIFICATIONS LIST ( WORK IN PROGRESS)
+<h3 class="txt-l txt-bold mb6"><strong> NOTIFICATIONS LIST</strong></h3>
 <ul id="notifications"></ul>
+<div id="button-container"></div>
 
 
 <script>
@@ -179,6 +167,43 @@ NOTIFICATIONS LIST ( WORK IN PROGRESS)
       const newItem = document.createElement("li");
       newItem.textContent = event.data;
       notificationList.appendChild(newItem);
+
+        // Create first button
+        const button1 = document.createElement("button");
+        button1.className="myButton";
+        button1.style.backgroundColor = "green";
+        button1.innerText = "ACCEPT";
+
+
+        // Create second button
+        const button2 = document.createElement("button");
+        button2.className="myButton";
+        button2.style.backgroundColor = "red";
+        button2.innerText = "REJECT";
+
+        button1.onclick = () => {
+            alert("Accepted");
+            button1.innerText = "ACCEPTED";
+            button2.style.backgroundColor = "grey";
+            button1.disabled = true;
+            button2.disabled = true;
+         };
+
+        button2.onclick = () => {
+            alert("Rejected!");
+            button2.innerText = "REJECTED";
+            button1.style.backgroundColor = "grey";
+            button1.disabled = true;
+            button2.disabled = true;
+        };
+
+        // Append buttons to the container
+        const container = document.getElementById("button-container");
+        container.appendChild(button1);
+        container.appendChild(button2);
+
+
+
     };
 
     eventSource.onerror = function(error) {
