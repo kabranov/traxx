@@ -160,6 +160,9 @@
 
 <script>
 
+    const params = new URLSearchParams(window.location.search);
+    const driverId = params.get("driverId") || "DriverIdUnknown";
+
     const eventSource = new EventSource("/notifications");
 
     eventSource.onmessage = function(event) {
@@ -187,6 +190,36 @@
             button2.style.backgroundColor = "grey";
             button1.disabled = true;
             button2.disabled = true;
+
+                      const payloadNotification = {message: "====> Confirmation from driver:  "+driverId +"  <===="};
+                      const payloadNotificationBody = JSON.stringify(payloadNotification);
+                      console.log("payloadNotificationBody:"+payloadNotificationBody);
+
+                      fetch("/confirm_notifications", {
+                        method: "POST",
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: payloadNotificationBody
+                      })
+                      .then(response => {
+                        // Handle the response from the server
+                        if (response.ok) {
+                          console.log("Notification submitted successfully");
+                          const json = response.text();
+                          console.log("JSON:"+json);
+
+                          return json;
+                        } else {
+                          console.error("Form submission failed");
+                        }
+                      }).then((data) => {
+                        console.log("DATA RECEIVED:"+data);
+
+                      });
+
+
+
          };
 
         button2.onclick = () => {
@@ -222,8 +255,8 @@ let percentage = 0.2;
 let charge_CD = 0.1 // Euro/km
 let charge_detour = 1.0 // Euro/km
 
-const params = new URLSearchParams(window.location.search);
-const driverId = params.get("driverId") || "DriverIdUnknown";
+//const params = new URLSearchParams(window.location.search);
+//const driverId = params.get("driverId") || "DriverIdUnknown";
 console.log("===>driverId="+driverId);
 document.getElementById("requestId").textContent = "Ihr Angebotreferenznummer ist "+driverId;
 
@@ -431,6 +464,12 @@ fetch('/get_matches?driverId='+driverId)
             var ACDBDistance =  map1.get("route");
             CDDistance = map1.get("pass_distance");
             var match = parseFloat(detour_km) < percentage*parseFloat(CDDistance);
+
+            if (match == false) {
+                row.remove();
+                //break;
+            }
+
             //var id1=0
             //var id2=0
             //getDistance="/get_distance?startId="+driverId+"&destId="+currNumber;

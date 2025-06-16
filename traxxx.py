@@ -888,7 +888,7 @@ def index():
 def index1():
     return render_template('websock1.html')
 
-clients = []
+clients1 = []
 @app.route('/send_notification', methods=['POST'])
 def send_notification():
     message = request.json.get("message", "No message")
@@ -896,9 +896,23 @@ def send_notification():
     full_message = f"{timestamp} - {message}"
 
     # Push the message to all connected clients
-    for q in clients:
+    for q in clients1:
         q.put(full_message)
     return {"status": "Notification sent", "message": full_message}, 200
+
+clients2 = []
+@app.route('/confirm_notifications', methods=['POST'])
+def confirm_notification():
+    message = request.json.get("message", "No message")
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    full_message = f"{timestamp} - {message}"
+
+    # Push the message to all connected clients
+    for q in clients2:
+        q.put(full_message)
+    return {"status": "Notification sent", "message": full_message}, 200
+
+
 
 @app.route('/notifications')
 def notifications():
@@ -911,11 +925,29 @@ def notifications():
                 yield f"data: {msg}\n\n"
         except GeneratorExit:
             # Client disconnected
-            clients.remove(q)
+            clients1.remove(q)
 
     # Create a new queue for this client
     q = Queue()
-    clients.append(q)
+    clients1.append(q)
+    return Response(stream_with_context(event_stream(q)), mimetype="text/event-stream")
+
+@app.route('/notifications_passenger')
+def notifications_passenger():
+    def event_stream(q: Queue):
+        try:
+            while True:
+                # Wait for new messages
+                msg = q.get()
+                print("mgs==>",msg)
+                yield f"data: {msg}\n\n"
+        except GeneratorExit:
+            # Client disconnected
+            clients2.remove(q)
+
+    # Create a new queue for this client
+    q = Queue()
+    clients2.append(q)
     return Response(stream_with_context(event_stream(q)), mimetype="text/event-stream")
 
 
