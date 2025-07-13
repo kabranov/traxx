@@ -891,25 +891,37 @@ def index1():
 clients1 = []
 @app.route('/send_notification', methods=['POST'])
 def send_notification():
-    message = request.json.get("message", "No message")
+    data = request.get_json()
+    message = data.get("message", "No message")
+    recipient_id = data.get("recipient_id")
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    full_message = f"{timestamp} - {message}"
+    full_message = {
+        "timestamp": timestamp,
+        "message": message,
+        "recipient_id": recipient_id
+    }
 
     # Push the message to all connected clients
     for q in clients1:
-        q.put(full_message)
+        q.put(json.dumps(full_message))  # Send as JSON
     return {"status": "Notification sent", "message": full_message}, 200
 
 clients2 = []
 @app.route('/confirm_notifications', methods=['POST'])
 def confirm_notification():
-    message = request.json.get("message", "No message")
+    data = request.get_json()
+    message = data.get("message", "No message")
+    recipient_id = data.get("recipient_id")  # New field
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
-    full_message = f"{timestamp} - {message}"
+    full_message = {
+        "timestamp": timestamp,
+        "message": message,
+        "recipient_id": recipient_id
+    }
 
     # Push the message to all connected clients
     for q in clients2:
-        q.put(full_message)
+        q.put(json.dumps(full_message))  # Send as JSON
     return {"status": "Notification sent", "message": full_message}, 200
 
 
