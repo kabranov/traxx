@@ -889,16 +889,20 @@ def index1():
     return render_template('websock1.html')
 
 clients1 = []
-@app.route('/send_notification', methods=['POST'])
-def send_notification():
+@app.route('/send_offer_notification', methods=['POST'])
+def send_offer_notification():
     data = request.get_json()
+
     message = data.get("message", "No message")
-    recipient_id = data.get("recipient_id")
+    driverId = data.get("driverId")
+    passengerId = data.get("passengerId")
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+
     full_message = {
         "timestamp": timestamp,
         "message": message,
-        "recipient_id": recipient_id
+        "driverId": driverId,
+        "passengerId": passengerId,
     }
 
     # Push the message to all connected clients
@@ -907,16 +911,20 @@ def send_notification():
     return {"status": "Notification sent", "message": full_message}, 200
 
 clients2 = []
-@app.route('/confirm_notifications', methods=['POST'])
-def confirm_notification():
+@app.route('/passenger_accept_notification', methods=['POST'])
+def passenger_accept_notification():
     data = request.get_json()
+
     message = data.get("message", "No message")
-    recipient_id = data.get("recipient_id")  # New field
+    driverId = data.get("driverId")
+    passengerId = data.get("passengerId")
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+
     full_message = {
         "timestamp": timestamp,
         "message": message,
-        "recipient_id": recipient_id
+        "driverId": driverId,
+        "passengerId": passengerId,
     }
 
     # Push the message to all connected clients
@@ -924,17 +932,37 @@ def confirm_notification():
         q.put(json.dumps(full_message))  # Send as JSON
     return {"status": "Notification sent", "message": full_message}, 200
 
+clients3 = []
+@app.route('/driver_accept_notification', methods=['POST'])
+def driver_accept_notification():
+    data = request.get_json()
 
+    message = data.get("message", "No message")
+    driverId = data.get("driverId")
+    passengerId = data.get("passengerId")
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
 
-@app.route('/notifications')
-def notifications():
+    full_message = {
+        "timestamp": timestamp,
+        "message": message,
+        "driverId": driverId,
+        "passengerId": passengerId,
+    }
+
+    # Push the message to all connected clients
+    for q in clients3:
+        q.put(json.dumps(full_message))  # Send as JSON
+    return {"status": "Notification sent", "message": full_message}, 200
+
+@app.route('/offer_notifications')
+def offer_notifications():
     def event_stream(q: Queue):
         try:
             while True:
                 # Wait for new messages
                 msg = q.get()
-                print("mgs==>",msg)
-                yield f"data: {msg}\n\n"
+                print("msg==>",msg)
+                yield msg
         except GeneratorExit:
             # Client disconnected
             clients1.remove(q)
@@ -944,15 +972,15 @@ def notifications():
     clients1.append(q)
     return Response(stream_with_context(event_stream(q)), mimetype="text/event-stream")
 
-@app.route('/notifications_passenger')
-def notifications_passenger():
+@app.route('/passenger_accept_notifications')
+def passenger_accept_notifications():
     def event_stream(q: Queue):
         try:
             while True:
                 # Wait for new messages
                 msg = q.get()
-                print("mgs==>",msg)
-                yield f"data: {msg}\n\n"
+                print("msg==>",msg)
+                yield msg
         except GeneratorExit:
             # Client disconnected
             clients2.remove(q)
@@ -960,6 +988,24 @@ def notifications_passenger():
     # Create a new queue for this client
     q = Queue()
     clients2.append(q)
+    return Response(stream_with_context(event_stream(q)), mimetype="text/event-stream")
+
+@app.route('/driver_accept_notifications')
+def driver_accept_notifications():
+    def event_stream(q: Queue):
+        try:
+            while True:
+                # Wait for new messages
+                msg = q.get()
+                print("msg==>",msg)
+                yield msg
+        except GeneratorExit:
+            # Client disconnected
+            clients3.remove(q)
+
+    # Create a new queue for this client
+    q = Queue()
+    clients3.append(q)
     return Response(stream_with_context(event_stream(q)), mimetype="text/event-stream")
 
 
