@@ -6,6 +6,7 @@ import math
 import requests
 import base64
 import time
+import json
 from queue import Queue
 
 app = Flask(__name__)
@@ -962,7 +963,7 @@ def offer_notifications():
                 # Wait for new messages
                 msg = q.get()
                 print("msg==>",msg)
-                yield msg
+                yield f"data: {msg}\n\n"
         except GeneratorExit:
             # Client disconnected
             clients1.remove(q)
@@ -980,7 +981,7 @@ def passenger_accept_notifications():
                 # Wait for new messages
                 msg = q.get()
                 print("msg==>",msg)
-                yield msg
+                yield f"data: {msg}\n\n"
         except GeneratorExit:
             # Client disconnected
             clients2.remove(q)
@@ -998,7 +999,7 @@ def driver_accept_notifications():
                 # Wait for new messages
                 msg = q.get()
                 print("msg==>",msg)
-                yield msg
+                yield f"data: {msg}\n\n"
         except GeneratorExit:
             # Client disconnected
             clients3.remove(q)
@@ -1007,7 +1008,6 @@ def driver_accept_notifications():
     q = Queue()
     clients3.append(q)
     return Response(stream_with_context(event_stream(q)), mimetype="text/event-stream")
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
